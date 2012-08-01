@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @Entity(repositoryClass="Pitpit\Loot\Entity\AppRepository")
- * @Table
+ * @Table(name="user")
  */
 class User
 {

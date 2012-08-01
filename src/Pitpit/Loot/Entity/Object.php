@@ -6,8 +6,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Wantlet\ORM\Point;
 
 /**
- * @Entity()
- * @Table
+ * @Entity
+ * @Table(name="object")
  */
 class Object
 {
