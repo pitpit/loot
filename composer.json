@@ -1,22 +1,4 @@
 {
-    "repositories": [
-        {
-            "type": "package",
-            "package": {
-                "name": "doctrine/spatial",
-                "version": "dev-master",
-                "dist": {
-                    "url": "https://github.com/jhartikainen/doctrine2-spatial/zipball/master",
-                    "type": "zip"
-                },
-                "source": {
-                    "url": "https://github.com/jhartikainen/doctrine2-spatial.git",
-                    "type": "git",
-                    "reference": "master"
-                }
-            }
-        }
-    ],
     "require": {
         "silex/silex": "1.0.*",
         "doctrine/orm": "2.2.*",
@@ -24,7 +6,6 @@
         "symfony/twig-bridge" : "2.1.*",
         "twig/twig": "1.9.*",
         "symfony/console": "2.1.*",
-        "doctrine/spatial": "dev-master",
         "doctrine/data-fixtures": "1.0.*"
     },
     "minimum-stability": "dev",

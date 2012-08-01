@@ -36,8 +36,6 @@ $app->register(new DoctrineORMServiceProvider(), array(
     'em.fixtures'              => $config['em']['fixtures'],
 ));
 
-$app->register(new DoctrineSpatialServiceProvider());
-
 $app->register(new UrlGeneratorServiceProvider());
 
 $app->register(new TranslationServiceProvider(), array(

@@ -2,11 +2,11 @@
 
 $config = array(
     'db' => array(
-        'driver' => 'pdo_mysql',
+        'driver' => 'pdo_pgsql',
         'host' => 'localhost',
         'name' => 'loot',
-        'user' => 'root',
-        'password' => 'root'
+        'user' => 'loot',
+        'password' => 'loot'
     ),
     'em' => array(
         'entities' => array('src/Pitpit/Loot/Entity'),
