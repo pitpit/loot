@@ -1,0 +1,16 @@
+#!/usr/bin/env php
+<?php
+
+// This will let the permissions be 0777
+//umask(0000);
+set_time_limit(0);
+
+require_once __DIR__.'/../vendor/autoload.php';
+
+use Symfony\Component\Console\Input\ArgvInput;
+
+$app = require __DIR__.'/app.php';
+$input = new ArgvInput();
+$app['debug'] = !$input->hasParameterOption(array('--no-debug', ''));
+
+$app['console']->run();
