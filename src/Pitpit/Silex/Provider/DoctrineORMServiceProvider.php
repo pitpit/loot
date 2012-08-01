@@ -68,6 +68,7 @@ class DoctrineORMServiceProvider implements ServiceProviderInterface
         if (isset($app['console'])) {
             $app['console']->add(new Command\CreateSchemaDoctrineCommand());
             $app['console']->add(new Command\UpdateSchemaDoctrineCommand());
+            $app['console']->add(new Command\DropSchemaDoctrineCommand());
 
             //@todo should be in a DBAL related provider
             $app['console']->add(new Command\DropDatabaseDoctrineCommand());
