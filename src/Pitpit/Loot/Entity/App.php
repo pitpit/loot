@@ -6,7 +6,12 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @Entity(repositoryClass="Pitpit\Loot\Entity\AppRepository")
- * @Table(name="app")
+ * @Table(
+ *   name="app",
+ *   indexes={
+ *      @index(name="name_idx", columns={"name"})
+ *   }
+ * )
  */
 class App
 {

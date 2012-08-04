@@ -3,7 +3,7 @@
 namespace Pitpit\Loot\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Wantlet\ORM\Point;
+use Pitpit\Doctrine\DBAL\Point;
 
 /**
  * @Entity

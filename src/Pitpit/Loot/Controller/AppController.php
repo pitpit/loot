@@ -5,7 +5,7 @@ namespace Pitpit\Loot\Controller;
 use Silex\Application;
 use Silex\ControllerCollection;
 
-class AppsController extends Controller
+class AppController extends Controller
 {
     protected static function build(Application $app, ControllerCollection $controllers)
     {

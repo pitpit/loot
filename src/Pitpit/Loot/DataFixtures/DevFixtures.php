@@ -4,7 +4,7 @@ namespace Pitpit\Loot\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\FixtureInterface;
-use Wantlet\ORM\Point;
+use Pitpit\Doctrine\DBAL\Point;
 use Pitpit\Loot\Entity;
 
 class DevFixtures implements FixtureInterface

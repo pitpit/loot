@@ -1,23 +1,18 @@
 <?php
 
-use Silex\Provider\DoctrineServiceProvider;
-use Silex\Provider\TwigServiceProvider;
-use Silex\Provider\TranslationServiceProvider;
-use Silex\Provider\UrlGeneratorServiceProvider;
+use Silex\Provider as SilexProvider;
 use Symfony\Component\Translation\Loader\YamlFileLoader;
-use Pitpit\Silex\Provider\DoctrineORMServiceProvider;
-use Pitpit\Silex\Provider\ConsoleServiceProvider;
-use Pitpit\Silex\Provider\DoctrineSpatialServiceProvider;
+use Pitpit\Silex\Provider as PitpitProvider;
 
-$config = require 'config.php';
+$config = require __DIR__ . '/config/config.php';
 
 $app = new Silex\Application();
 
 if (PHP_SAPI === 'cli') {
-    $app->register(new ConsoleServiceProvider());
+    $app->register(new PitpitProvider\ConsoleServiceProvider());
 }
 
-$app->register(new DoctrineServiceProvider(), array(
+$app->register(new SilexProvider\DoctrineServiceProvider(), array(
     'db.options' => array(
         'driver'    => $config['db']['driver'],
         'dbname'    => $config['db']['name'],
@@ -27,7 +22,7 @@ $app->register(new DoctrineServiceProvider(), array(
     )
 ));
 
-$app->register(new DoctrineORMServiceProvider(), array(
+$app->register(new PitpitProvider\DoctrineORMServiceProvider(), array(
     'em.options' => array(
         'proxy_dir'         => __DIR__ . '/cache/proxies',
         'proxy_namespace'   => 'DoctrineORMProxy',
@@ -36,9 +31,11 @@ $app->register(new DoctrineORMServiceProvider(), array(
     'em.fixtures'              => $config['em']['fixtures'],
 ));
 
-$app->register(new UrlGeneratorServiceProvider());
+$app->register(new PitpitProvider\DoctrineGeoServiceProvider());
 
-$app->register(new TranslationServiceProvider(), array(
+$app->register(new SilexProvider\UrlGeneratorServiceProvider());
+
+$app->register(new SilexProvider\TranslationServiceProvider(), array(
     'locale_fallback' => $config['translator']['locale_fallback']
 ));
 
@@ -52,7 +49,7 @@ $app['translator'] = $app->share($app->extend('translator', function($translator
     return $translator;
 }));
 
-$app->register(new TwigServiceProvider(), array(
+$app->register(new SilexProvider\TwigServiceProvider(), array(
     'twig.path' => __DIR__ . '/views',
     'cache' => __DIR__ . '/cache/twig'
 ));
