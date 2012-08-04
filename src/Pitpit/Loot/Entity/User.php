@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @Table(
  *   name="uuser",
  *   indexes={
- *     @index(name="is_developer_idx", columns={"isDeveloper"}),
+ *     @index(name="is_developer_idx", columns={"is_developer"}),
  *     @index(name="email_idx", columns={"email"})
  *   }
  * )
@@ -32,13 +32,35 @@ class User
     protected $email;
 
     /**
-     *@Column(type="boolean")
+     *@Column(name="is_developer", type="boolean")
      */
     protected $isDeveloper;
 
-    public function __construct($email)
+    /**
+     * When this user has been created
+     *
+     * @Column(type="datetime")
+     */
+    protected $created;
+
+    /**
+     * When this user has been modified for the last time
+     *
+     * @Column(type="datetime")
+     */
+    protected $modified;
+
+    /**
+     * All the apps this user can interact with
+     * @OneToMany(targetEntity="UserApp", mappedBy="user")
+     **/
+    protected $userApps;
+
+    public function __construct()
     {
-        $this->setEmail($email);
+        $this->userApps = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->created = new \Datetime();
+        $this->modified = new \Datetime();
         $this->setIsDeveloper(false);
     }
 

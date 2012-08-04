@@ -11,10 +11,14 @@ class DevFixtures implements FixtureInterface
 {
     public function load(ObjectManager $manager)
     {
-        $user = new Entity\User('damien.pitard@gmail.com');
+        $user = new Entity\User();
+        $user->setIsDeveloper(true);
+        $user->setEmail('damien.pitard@gmail.com');
         $manager->persist($user);
 
-        $app = new Entity\App('myApp1');
+        $app = new Entity\App();
+        $app->setName('myApp1');
+        $app->addUser($user, Entity\UserApp::CREATOR_ROLE);
         $manager->persist($app);
 
         $object1 = new Entity\Object($app, $user, new Point(49.627, 1.175));

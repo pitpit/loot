@@ -6,4 +6,8 @@ use Doctrine\ORM\EntityRepository;
 
 class AppRepository extends EntityRepository
 {
+    public function findByUserId()
+    {
+        //@todo
+    }
 }

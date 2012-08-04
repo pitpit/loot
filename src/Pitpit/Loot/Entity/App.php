@@ -32,9 +32,30 @@ class App
      */
     protected $secret;
 
-    public function __construct($name)
+    /**
+     * When this app has been created
+     *
+     * @Column(type="datetime")
+     */
+    protected $created;
+
+    /**
+     * When this app has been modified for the last time
+     *
+     * @Column(type="datetime")
+     */
+    protected $modified;
+
+    /**
+     * @OneToMany(targetEntity="UserApp", mappedBy="app", cascade={"persist"})
+     **/
+    protected $userApps;
+
+    public function __construct()
     {
-        $this->setName($name);
+        $this->userApps = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->created = new \Datetime();
+        $this->modified = new \Datetime();
         $this->resetSecret();
     }
 
@@ -51,6 +72,11 @@ class App
     public function setName($name)
     {
         $this->name = $name;
+    }
+
+    public function addUser(User $user, $role)
+    {
+        $this->userApps[] = new UserApp($this, $user, $role);
     }
 
     protected function resetSecret()

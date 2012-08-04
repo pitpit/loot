@@ -25,20 +25,20 @@ class Object
 
     /**
      * @ManyToOne(targetEntity="App")
-     * @JoinColumn(name="app_id", referencedColumnName="id", nullable=false)
+     * @JoinColumn(nullable=false)
      **/
     protected $app;
 
     /**
      * @ManyToOne(targetEntity="User")
-     * @JoinColumn(name="author_id", referencedColumnName="id", nullable=false)
+     * @JoinColumn(nullable=false)
      **/
-    protected $author;
+    protected $creator;
 
-    public function __construct(App $app, User $author, Point $position)
+    public function __construct(App $app, User $creator, Point $position)
     {
         $this->setApp($app);
-        $this->setAuthor($author);
+        $this->setCreator($creator);
         $this->setPosition($position);
     }
 
@@ -52,14 +52,14 @@ class Object
         $this->app = $app;
     }
 
-    public function getAuthor()
+    public function getCreator()
     {
-        return $this->author;
+        return $this->creator;
     }
 
-    public function setAuthor(User $author)
+    public function setCreator(User $creator)
     {
-        $this->author = $author;
+        $this->creator = $creator;
     }
 
     public function setPosition(Point $point)
