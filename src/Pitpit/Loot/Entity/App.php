@@ -23,12 +23,17 @@ class App
     protected $id;
 
     /**
-     * @Column(type="text", length=255)
+     * @Column(type="string", length=80)
      */
     protected $name;
 
     /**
-     * @Column(type="text", length=40)
+     * @Column(type="text", nullable=true)
+     */
+    protected $description;
+
+    /**
+     * @Column(type="string", length=40)
      */
     protected $secret;
 
@@ -74,6 +79,16 @@ class App
         $this->name = $name;
     }
 
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    public function setDescription($description)
+    {
+        $this->description = $description;
+    }
+
     public function addUser(User $user, $role)
     {
         $this->userApps[] = new UserApp($this, $user, $role);
@@ -82,5 +97,10 @@ class App
     protected function resetSecret()
     {
         $this->secret = sha1(uniqid());
+    }
+
+    public function getSecret()
+    {
+        return $this->secret;
     }
 }

@@ -10,7 +10,6 @@ $app = require __DIR__.'/../app/app.php';
 $app['debug'] = true;
 
 Controller\ApiController::mount($app, '/api');
-Controller\AppController::mount($app, '/app');
-
+Controller\AppsController::mount($app, '/apps');
 
 $app->run();

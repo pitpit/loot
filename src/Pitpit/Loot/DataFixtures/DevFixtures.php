@@ -16,12 +16,18 @@ class DevFixtures implements FixtureInterface
         $user->setEmail('damien.pitard@gmail.com');
         $manager->persist($user);
 
-        $app = new Entity\App();
-        $app->setName('myApp1');
-        $app->addUser($user, Entity\UserApp::CREATOR_ROLE);
-        $manager->persist($app);
+        $app1 = new Entity\App();
+        $app1->setName('myApp1');
+        $app1->addUser($user, Entity\UserApp::CREATOR_ROLE);
+        $app1->setDescription('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur tincidunt semper massa vitae pharetra. Sed viverra arcu eu libero gravida ornare tincidunt est ornare');
+        $manager->persist($app1);
 
-        $object1 = new Entity\Object($app, $user, new Point(49.627, 1.175));
+        $app2 = new Entity\App();
+        $app2->setName('myApp2');
+        $app2->addUser($user, Entity\UserApp::CREATOR_ROLE);
+        $manager->persist($app2);
+
+        $object1 = new Entity\Object($app1, $user, new Point(49.627, 1.175));
         $manager->persist($object1);
 
         $manager->flush();

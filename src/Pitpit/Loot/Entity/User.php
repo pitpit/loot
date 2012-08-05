@@ -27,7 +27,7 @@ class User
     protected $id;
 
     /**
-     * @Column(type="text", length=255)
+     * @Column(type="string", length=255)
      */
     protected $email;
 
