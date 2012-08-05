@@ -1,5 +1,5 @@
 {
-    "hash": "fddcad85d05b99912695541e9adcee86",
+    "hash": "7550c81554a84afdccbb8b53cef47f76",
     "packages": [
         {
             "package": "doctrine/common",
@@ -136,6 +136,12 @@
             "commit-date": "1343229695"
         },
         {
+            "package": "symfony/yaml",
+            "version": "2.0.x-dev",
+            "source-reference": "v2.0.16",
+            "commit-date": "1341837830"
+        },
+        {
             "package": "twig/twig",
             "version": "dev-master",
             "alias-pretty-version": "1.9.x-dev",
@@ -153,7 +159,7 @@
 
     ],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "doctrine/spatial": 20
-    }
+    "stability-flags": [
+
+    ]
 }
