@@ -11,7 +11,7 @@ class AppsController extends Controller
 {
     protected static function build(Application $app, ControllerCollection $controllers)
     {
-        $controllers->get('/', function() use ($app) {
+        $controllers->get('/{locale}/apps/', function($locale) use ($app) {
 
             //load current user from session & database
             $userId = 1;
@@ -19,20 +19,26 @@ class AppsController extends Controller
             if (!$user || !$user->getIsDeveloper()) {
                 throw new AccessDeniedHttpException(sprintf('User "%s" is not allowed to access this area', $userId));
             }
+
+            //@todo chech locale
 
             $apps = $app['em']->getRepository('Pitpit\Loot\Entity\App')->findByUserId($userId, 1);
 
             if (count($apps) > 0) {
-                return $app->redirect($app['url_generator']->generate('apps_show', array('id' => $apps[0]->getId())));
+                return $app->redirect($app['url_generator']->generate('apps_show', array(
+                    'id' => $apps[0]->getId(),
+                    'locale' => $locale,
+                )));
             }
 
             return $app['twig']->render('Apps/home.html.twig', array(
-                'user' => $user
+                'user' => $user,    //@todo load user and pass it to the template in a global function
+                'locale' => $locale, //@todo pass locale to the template in a global function
             ));
 
         })->bind('apps_home');
 
-        $controllers->get('/{id}', function($id) use ($app) {
+        $controllers->get('/{locale}/apps/{id}', function($locale, $id) use ($app) {
 
             //load current user from session & database
             $userId = 1;
@@ -41,32 +47,27 @@ class AppsController extends Controller
                 throw new AccessDeniedHttpException(sprintf('User "%s" is not allowed to access this area', $userId));
             }
 
+            //@todo chech locale
+
             //get all apps of the current user
             $apps = $app['em']->getRepository('Pitpit\Loot\Entity\App')->findByUserId($userId);
 
+            //look for the current app
             $current = null;
-            if (null !== $id) {
-                //look for the current app
-                foreach ($apps as $application) {
-                    if ($application->getId() == $id) {
-                        $current = $application;
-                        break;
-                    }
+            foreach ($apps as $application) {
+                if ($application->getId() == $id) {
+                    $current = $application;
+                    break;
                 }
-
-                if (null === $current) {
-                    throw new NotFoundHttpException(sprintf('App "%s" does not exist or user "%s" is not allowed to access it', $id, $userId));
-                }
-            } else if (count($apps) > 0) {
-                $current = $apps[0];
             }
 
-            //@todo check the role the user have
-
-            //@todo load user and pass it to the template in a global function
+            if (null === $current) {
+                throw new NotFoundHttpException(sprintf('App "%s" does not exist or user "%s" is not allowed to access it', $id, $userId));
+            }
 
             return $app['twig']->render('Apps/show.html.twig', array(
-                'user' => $user,
+                'user' => $user, //@todo load user and pass it to the template in a global function
+                'locale' => $locale, //@todo pass locale to the template in a global function
                 'apps' => $apps,
                 'current' => $current
             ));

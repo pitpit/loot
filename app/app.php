@@ -58,11 +58,11 @@ $app->register(new SilexProvider\TwigServiceProvider(), array(
     'cache' => __DIR__ . '/cache/twig'
 ));
 
-//set default locale
-$app->before(function () use ($app) {
-    if ($locale = $app['request']->get('locale')) {
-        $app['locale'] = $locale;
-    }
-});
+// //set default locale
+// $app->before(function () use ($app) {
+//     if ($locale = $app['request']->get('locale')) {
+//         $app['locale'] = $locale;
+//     }
+// });
 
 return $app;
