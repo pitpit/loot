@@ -1,0 +1,53 @@
+{% extends 'layout.html.twig' %}
+{% block title %}{{ current.name }}{{ parent() }}{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="span3">
+      <div class="well sidebar-nav">
+        <ul class="nav nav-list">
+            <li class="nav-header">{{ 'Your Apps'|trans }}</li>
+            {% for app in apps %}
+            <li {% if current and current.id == app.id %}class="active" {% endif %}><a href="{{ path('apps_show', {'id': app.id}) }}">{{ app.name }}</a></li>
+            {% endfor %}
+        </ul>
+      </div><!--/.well -->
+    </div>
+
+
+    <div class="span9">
+        <div class="row">
+            <div class="span5">
+                <h1>{{ current.name }} </h1>
+            </div>
+            <div class="span4">
+                <a class="btn" href="#"><i class="icon-edit"></i> {{ "Edit App"|trans }}</a> <a class="btn" href="#"><i class="icon-plus"></i> {{ "Create New App"|trans }}</a>
+            </div>
+        </div>
+
+        <hr />
+
+        {% if current.description %}
+        <p class="lead">{{ current.description }}</p>
+        {% endif %}
+        <div class="row">
+            <div class="span5">
+                <table class="table table-condensed table-striped table-bordered">
+                    {#<thead>
+                        <tr>
+                            <th collspan="2">{{ "Settings"|trans }}</th>
+                        </tr>
+                    </thead>#}
+                    <tr>
+                        <th>{{ "App ID" }}</th>
+                        <td>{{ current.id }}</td>
+                    </tr>        <tr>
+                        <th>{{ "App Secret" }}</th>
+                        <td>{{ current.secret }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
