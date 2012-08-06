@@ -6,12 +6,13 @@ use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Pitpit\Loot\Entity;
 
 class AppsController extends Controller
 {
     protected static function build(Application $app, ControllerCollection $controllers)
     {
-        $controllers->get('/{locale}/apps/', function($locale) use ($app) {
+        $controllers->get('/{locale}/apps', function($locale) use ($app) {
 
             //load current user from session & database
             $userId = 1;
@@ -54,9 +55,9 @@ class AppsController extends Controller
 
             //look for the current app
             $current = null;
-            foreach ($apps as $application) {
-                if ($application->getId() == $id) {
-                    $current = $application;
+            foreach ($apps as $myApp) {
+                if ($myApp->getId() == $id) {
+                    $current = $myApp;
                     break;
                 }
             }
@@ -74,5 +75,30 @@ class AppsController extends Controller
 
         })->assert('id', '\d+')
           ->bind('apps_show');
+
+        $controllers->get('/{locale}/apps/_new', function($locale) use ($app) {
+
+            //load current user from session & database
+            $userId = 1;
+            $user = $app['em']->getRepository('Pitpit\Loot\Entity\User')->findOneById($userId);
+            if (!$user || !$user->getIsDeveloper()) {
+                throw new AccessDeniedHttpException(sprintf('User "%s" is not allowed to access this area', $userId));
+            }
+
+            $myApp = new Entity\App();
+
+            //@todo chech locale
+            $form = $app['form.factory']->createBuilder('form', $myApp)
+                ->add('name')
+                ->add('description')
+                ->getForm();
+
+            return $app['twig']->render('Apps/form.html.twig', array(
+                'user' => $user,    //@todo load user and pass it to the template in a global function
+                'locale' => $locale, //@todo pass locale to the template in a global function
+                'form' => $form->createView(),
+            ));
+
+        })->bind('apps_new');
     }
 }

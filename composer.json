@@ -8,7 +8,8 @@
         "symfony/console": "2.1.*",
         "doctrine/data-fixtures": "1.0.*",
         "symfony/yaml": "2.0.*",
-        "symfony/config": "2.0.*"
+        "symfony/config": "2.0.*",
+        "symfony/form": "2.1.*"
     },
     "minimum-stability": "dev",
     "autoload": {

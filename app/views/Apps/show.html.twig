@@ -20,7 +20,7 @@
                 <h1>{{ current.name }} </h1>
             </div>
             <div class="span4">
-                <a class="btn" href="#"><i class="icon-edit"></i> {{ "Edit App"|trans }}</a> <a class="btn" href="#"><i class="icon-plus"></i> {{ "Create New App"|trans }}</a>
+                <a class="btn open-dialog" href="#"><i class="icon-edit"></i> {{ "Edit App"|trans }}</a> <a class="btn open-dialog" href="{{ path('apps_new', {'locale': locale}) }}"><i class="icon-plus"></i> {{ "Create New App"|trans }}</a>
             </div>
         </div>
 

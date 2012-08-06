@@ -49,9 +49,7 @@ $app['translator'] = $app->share($app->extend('translator', function($translator
     return $translator;
 }));
 
-
-
-//$app->register(new SilexProvider\FormServiceProvider());
+$app->register(new SilexProvider\FormServiceProvider());
 
 $app->register(new SilexProvider\TwigServiceProvider(), array(
     'twig.path' => __DIR__ . '/views',
