@@ -63,7 +63,7 @@ $app->before(function () use ($app, $config) {
         if (!isset($config['translator']['locales'][$locale]) && $locale != $config['translator']['default_locale']) {
             throw new NotFoundHttpException(sprintf('Locale "%s" is not supported', $locale));
         }
-        $app['locale'] = $locale;
+        $app['twig']->addGlobal('locale', $locale);
     }
 });
 
