@@ -13,7 +13,7 @@ $config = array(
         'fixtures' => array('src/Pitpit/Loot/DataFixtures')
     ),
     'translator' => array(
-        'locale_fallback' => 'en_US',
+        'default_locale' => 'en_US',
         'locales' => array(
             'fr_FR' => 'fr_FR.yml'
         )

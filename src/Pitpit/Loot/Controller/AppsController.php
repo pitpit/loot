@@ -7,51 +7,51 @@ use Silex\ControllerCollection;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Pitpit\Loot\Entity;
+use Pitpit\Loot\Form;
 
 class AppsController extends Controller
 {
     protected static function build(Application $app, ControllerCollection $controllers)
     {
-        $controllers->get('/{locale}/apps', function($locale) use ($app) {
-
-            //load current user from session & database
-            $userId = 1;
+        //load current user from session & database
+        //@todo move it in a global place
+        $app['user'] = $app->share(function () use ($app) {
+            $userId = 2;
             $user = $app['em']->getRepository('Pitpit\Loot\Entity\User')->findOneById($userId);
             if (!$user || !$user->getIsDeveloper()) {
                 throw new AccessDeniedHttpException(sprintf('User "%s" is not allowed to access this area', $userId));
             }
 
-            //@todo chech locale
+            return $user;
+        });
 
-            $apps = $app['em']->getRepository('Pitpit\Loot\Entity\App')->findByUserId($userId, 1);
+        /**
+         * The apps homepage
+         *   - if the user has no apps, we provide a standard page
+         *   - else the user is redirected to its first app
+         */
+        $controllers->get('/{locale}/apps', function($locale) use ($app) {
+
+            $apps = $app['em']->getRepository('Pitpit\Loot\Entity\App')->findByUserId($app['user']->getId(), 1);
 
             if (count($apps) > 0) {
-                return $app->redirect($app['url_generator']->generate('apps_show', array(
+                return $app->redirect($app['url_generator']->generate('app_show', array(
                     'id' => $apps[0]->getId(),
                     'locale' => $locale,
                 )));
             }
 
-            return $app['twig']->render('Apps/home.html.twig', array(
-                'user' => $user,    //@todo load user and pass it to the template in a global function
-                'locale' => $locale, //@todo pass locale to the template in a global function
-            ));
+            return $app['twig']->render('Apps/home.html.twig');
 
-        })->bind('apps_home');
+        })
+        ->bind('apps');
 
-        $controllers->get('/{locale}/apps/{id}', function($locale, $id) use ($app) {
-
-            //load current user from session & database
-            $userId = 1;
-            $user = $app['em']->getRepository('Pitpit\Loot\Entity\User')->findOneById($userId);
-            if (!$user || !$user->getIsDeveloper()) {
-                throw new AccessDeniedHttpException(sprintf('User "%s" is not allowed to access this area', $userId));
-            }
+        $controllers->get('/{locale}/app/{id}', function($locale, $id) use ($app) {
 
             //@todo chech locale
 
             //get all apps of the current user
-            $apps = $app['em']->getRepository('Pitpit\Loot\Entity\App')->findByUserId($userId);
+            $apps = $app['em']->getRepository('Pitpit\Loot\Entity\App')->findByUserId($app['user']->getId());
 
             //look for the current app
             $current = null;
@@ -63,42 +63,63 @@ class AppsController extends Controller
             }
 
             if (null === $current) {
-                throw new NotFoundHttpException(sprintf('App "%s" does not exist or user "%s" is not allowed to access it', $id, $userId));
+                throw new NotFoundHttpException(sprintf('App "%s" does not exist or user "%s" is not allowed to access it', $id, $app['user']->getId()));
             }
 
             return $app['twig']->render('Apps/show.html.twig', array(
-                'user' => $user, //@todo load user and pass it to the template in a global function
-                'locale' => $locale, //@todo pass locale to the template in a global function
                 'apps' => $apps,
                 'current' => $current
             ));
 
-        })->assert('id', '\d+')
-          ->bind('apps_show');
+        })
+        ->assert('id', '\d+')
+        ->bind('app_show');
 
-        $controllers->get('/{locale}/apps/_new', function($locale) use ($app) {
-
-            //load current user from session & database
-            $userId = 1;
-            $user = $app['em']->getRepository('Pitpit\Loot\Entity\User')->findOneById($userId);
-            if (!$user || !$user->getIsDeveloper()) {
-                throw new AccessDeniedHttpException(sprintf('User "%s" is not allowed to access this area', $userId));
-            }
+        /**
+         * Get the form to create a new app
+         *
+         * @category ajax
+         */
+        $controllers->get('/{locale}/app/_new', function($locale) use ($app) {
 
             $myApp = new Entity\App();
 
-            //@todo chech locale
-            $form = $app['form.factory']->createBuilder('form', $myApp)
-                ->add('name')
-                ->add('description')
-                ->getForm();
+            $form = $app['form.factory']->create(new Form\AppNameType(), $myApp);
 
-            return $app['twig']->render('Apps/form.html.twig', array(
-                'user' => $user,    //@todo load user and pass it to the template in a global function
-                'locale' => $locale, //@todo pass locale to the template in a global function
+            return $app['twig']->render('Apps/new.html.twig', array(
                 'form' => $form->createView(),
             ));
 
-        })->bind('apps_new');
+        })
+        ->bind('app_new');
+
+        /**
+         * Get app info
+         *
+         * @todo move it to a better place
+         *
+         * @category ajax
+         * @category api
+         */
+        $controllers->get('/app.{_format}', function() use ($app) {
+
+            $myApp = null;
+            if ($name = $app['request']->get('name')) {
+                $myApp = $app['em']->getRepository('Pitpit\Loot\Entity\App')->findOneByName($name);
+            }
+
+            if (!$myApp) {
+                // throw new NotFoundHttpException('No app found');
+                $data = array();
+            } else {
+                $data = array(
+                    'id' => $myApp->getId(),
+                    'name' => $myApp->getName(),
+                );
+            }
+
+            return $app->json($data);
+        })
+        ->bind('api_app');
     }
 }

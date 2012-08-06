@@ -22,13 +22,13 @@
               </a>
               <a class="brand" href="#">Loot</a>
               <div class="btn-group pull-right">
-                {% if user is defined %}
+                {% if app.user is defined %}
                 <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                  <i class="icon-user"></i> {{ user.email }}
+                  <i class="icon-user"></i> {{ app.user.email }}
                   <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
-                  <li><a href="{{ path('apps_home', {'locale': locale}) }}">Your Apps</a></li>
+                  <li><a href="{{ path('apps', {'locale': app.locale}) }}">Your Apps</a></li>
                   <li><a href="#">Profile</a></li>
                   <li class="divider"></li>
                   <li><a href="#">Sign Out</a></li>
