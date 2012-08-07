@@ -54,9 +54,11 @@ $app->register(new SilexProvider\FormServiceProvider());
 
 $app->register(new SilexProvider\TwigServiceProvider(), array(
     'twig.path' => __DIR__ . '/views',
-    'cache' => __DIR__ . '/cache/twig'
+    'cache' => __DIR__ . '/cache/twig',
+    //'twig.form.templates' => array('Form/fields.html.twig')
 ));
 
+//set locale
 $app->before(function () use ($app, $config) {
     $locale = $app['request']->get('locale');
     if ($locale) { //ignore routes that do not support locale as parameter

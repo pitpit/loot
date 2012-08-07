@@ -20,7 +20,11 @@
                 <h1>{{ current.name }} </h1>
             </div>
             <div class="span4">
-                <a class="btn open-dialog" href="#"><i class="icon-edit"></i> {{ "Edit App"|trans }}</a> <a class="btn open-dialog" href="{{ path('app_new', {'locale': locale}) }}"><i class="icon-plus"></i> {{ "Create New App"|trans }}</a>
+                {#<a class="btn btn-danger" href="#"><i class="icon-remove icon-white"></i> {{ "Delete App"|trans }}</a>#}
+
+                <a class="btn" href="#"><i class="icon-edit"></i> {{ "Edit App"|trans }}</a>
+
+                <a class="btn" data-toggle="modal" href="#new-modal"><i class="icon-plus"></i> {{ "Create New App"|trans }}</a>
             </div>
         </div>
 
@@ -50,4 +54,7 @@
     </div>
 </div>
 {% endblock %}
-
+{% block javascripts %}
+{{ parent() }}
+{% include 'Apps/_new_form.html.twig' %}
+{% endblock %}

@@ -11,8 +11,7 @@ class AppRepository extends EntityRepository
         //@todo
         $qb = $this->createQueryBuilder('a')
             ->leftJoin('a.userApps', 'ua')
-            ->leftJoin('ua.user', 'u')
-            ->where('u.id = :userId')
+            ->where('ua.user = :userId')
             ->setParameter('userId', $userId)
             ->add('orderBy', 'a.name ASC');
 
@@ -20,9 +19,24 @@ class AppRepository extends EntityRepository
             $qb->setMaxResults($limit);
         }
 
-        $query = $qb->getQuery();
-        $results = $query->getResult();
+        return $qb->getQuery()->getResult();
+    }
 
-        return $results;
+    public function findOneByNameAndUserId($name, $userId)
+    {
+        $qb = $this->createQueryBuilder('a')
+            ->leftJoin('a.userApps', 'ua')
+            ->where('ua.user = :userId')
+            ->andWhere('a.name = :name')
+            ->setParameter('name', $name)
+            ->setParameter('userId', $userId)
+            ->setMaxResults(1);
+
+        $results = $qb->getQuery()->getResult();
+        if (count($results) == 0) {
+            return null;
+        }
+
+        return $results[0];
     }
 }

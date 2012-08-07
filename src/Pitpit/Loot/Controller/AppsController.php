@@ -7,7 +7,7 @@ use Silex\ControllerCollection;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Pitpit\Loot\Entity;
-use Pitpit\Loot\Form;
+use Pitpit\Loot\Form\Type\AppNameType;
 
 class AppsController extends Controller
 {
@@ -40,7 +40,11 @@ class AppsController extends Controller
                 )));
             }
 
-            return $app['twig']->render('Apps/home.html.twig');
+            $form = $app['form.factory']->create(new AppNameType(), new Entity\App());
+
+            return $app['twig']->render('Apps/home.html.twig', array(
+                'form' => $form->createView()
+            ));
 
         })
         ->bind('apps');
@@ -68,9 +72,12 @@ class AppsController extends Controller
                 throw new NotFoundHttpException(sprintf('App "%s" does not exist or user "%s" is not allowed to access it', $id, $app['user']->getId()));
             }
 
+            $form = $app['form.factory']->create(new AppNameType(), new Entity\App());
+
             return $app['twig']->render('Apps/show.html.twig', array(
                 'apps' => $apps,
-                'current' => $current
+                'current' => $current,
+                'form' => $form->createView()
             ));
 
         })
@@ -82,54 +89,73 @@ class AppsController extends Controller
          *
          * @category ajax
          */
-        $controllers->get('/{locale}/app/_new', function($locale) use ($app) {
+        $controllers->post('/{locale}/app', function($locale) use ($app) {
 
             if (!$app['user'] || !$app['user']->getIsDeveloper()) {
                 throw new AccessDeniedHttpException(sprintf('User is not allowed to access this area'));
             }
 
-            $myApp = new Entity\App();
+            $newApp = new Entity\App();
 
-            $form = $app['form.factory']->create(new Form\AppNameType(), $myApp);
+            $form = $app['form.factory']->create(new AppNameType(), $newApp);
 
-            return $app['twig']->render('Apps/new.html.twig', array(
-                'form' => $form->createView(),
-            ));
+            $form->bindRequest($app['request']);
 
+            if ($form->isValid()) {
+
+                //check if an app with the same name exist
+                $samle = $app['em']->getRepository('Pitpit\Loot\Entity\App')->findOneByNameAndUserId($name, $app['user']->getId());
+                if ($same !== null) {
+                    throw new \Exception('An app with the same name already exists');
+                }
+
+                $newApp->addUser($app['user'], Entity\UserApp::CREATOR_ROLE);
+
+                $app['em']->persist($newApp);
+                $app['em']->flush();
+
+                // redirect somewhere
+                return $app->redirect($app['url_generator']->generate('app_show', array(
+                    'id' => $newApp->getId(),
+                    'locale' => $locale,
+                )));
+            } else {
+                throw new \Exception('Invalid form');
+            }
         })
-        ->bind('app_new');
+        ->bind('app_create');
 
-        // /**
-        //  * Get app info
-        //  *
-        //  * @todo move it to a better place
-        //  *
-        //  * @category ajax
-        //  * @category api
-        //  */
-        // $controllers->get('/app.{_format}', function() use ($app) {
+        /**
+         * Get app info
+         *
+         * @todo move it to a better place
+         *
+         * @category ajax
+         * @category api
+         */
+        $controllers->get('/app.{_format}', function() use ($app) {
 
-        //     if (!$app['user'] || !$app['user']->getIsDeveloper()) {
-        //         throw new AccessDeniedHttpException(sprintf('User is not allowed to access this area'));
-        //     }
+            if (!$app['user'] || !$app['user']->getIsDeveloper()) {
+                throw new AccessDeniedHttpException(sprintf('User is not allowed to access this area'));
+            }
 
-        //     $myApp = null;
-        //     if ($name = $app['request']->get('name')) {
-        //         $myApp = $app['em']->getRepository('Pitpit\Loot\Entity\App')->findOneByName($name);
-        //     }
+            $myApp = null;
+            if ($name = $app['request']->get('name')) {
+                $myApp = $app['em']->getRepository('Pitpit\Loot\Entity\App')->findOneByNameAndUserId($name, $app['user']->getId());
+            }
 
-        //     if (!$myApp) {
-        //         $data = array();
-        //     } else {
-        //         $data = array(
-        //             'id' => $myApp->getId(),
-        //             'name' => $myApp->getName(),
-        //         );
-        //     }
+            if (!$myApp) {
+                $data = array();
+            } else {
+                $data = array(
+                    'id' => $myApp->getId(),
+                    'name' => $myApp->getName(),
+                );
+            }
 
-        //     return $app->json($data);
-        // })
-        // ->assert('_format', 'json')
-        // ->bind('api_app');
+            return $app->json($data);
+        })
+        ->assert('_format', 'json')
+        ->bind('api_app');
     }
 }
