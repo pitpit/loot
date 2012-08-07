@@ -17,6 +17,9 @@ $config = array(
         'locales' => array(
             'fr_FR' => 'fr_FR.yml'
         )
+    ),
+    'app' => array(
+        'max_apps' => 10
     )
 );
 

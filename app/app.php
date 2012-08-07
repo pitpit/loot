@@ -69,4 +69,6 @@ $app->before(function () use ($app, $config) {
     }
 });
 
+$app['config'] = $config['app'];
+
 return $app;

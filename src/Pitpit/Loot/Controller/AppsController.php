@@ -95,6 +95,8 @@ class AppsController extends Controller
                 throw new AccessDeniedHttpException(sprintf('User is not allowed to access this area'));
             }
 
+            //@todo check the max number of apps
+
             $newApp = new Entity\App();
 
             $form = $app['form.factory']->create(new AppNameType(), $newApp);
