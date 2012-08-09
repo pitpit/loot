@@ -51,6 +51,9 @@ class AppsController extends Controller
         })
         ->bind('apps');
 
+        /**
+         * Show the app $id
+         */
         $controllers->get('/{locale}/app/{id}', function($locale, $id) use ($app) {
 
             if (!$app['user'] || !$app['user']->getIsDeveloper()) {
@@ -87,6 +90,9 @@ class AppsController extends Controller
         ->assert('id', '\d+')
         ->bind('app_show');
 
+        /**
+         * show the form to edit ap $id and store its update on POST
+         */
         $controllers->match('/{locale}/app/{id}/_edit', function($locale, $id) use ($app) {
 
             if (!$app['user'] || !$app['user']->getIsDeveloper()) {
@@ -138,6 +144,9 @@ class AppsController extends Controller
         ->assert('id', '\d+')
         ->bind('app_edit');
 
+        /**
+         * Delete the app $id
+         */
         $controllers->get('/{locale}/app/{id}/_delete', function($locale, $id) use ($app) {
 
             if (!$app['user'] || !$app['user']->getIsDeveloper()) {
