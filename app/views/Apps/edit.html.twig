@@ -1,0 +1,41 @@
+{% extends 'layout.html.twig' %}
+{% block title %}{{ current.name }}{{ parent() }}{% endblock %}
+{% block content %}
+<div class="row">
+
+    {% include 'Apps/_apps_sidebar.html.twig' %}
+
+    <div class="span9">
+        <div class="row">
+            <div class="span5">
+                <h1>{{ current.name }} </h1>
+            </div>
+            <div class="span4 button-control-head">
+                <a type="submit" class="btn btn-danger" href="{{ path('app_delete', {'id': current.id, 'locale': locale})}}"><i class="icon-remove icon-white"></i> {{ "Delete App"|trans }}</a>
+            </div>
+        </div>
+
+        <hr />
+
+        <form class="form-horizontal" action="{{ path('app_edit', {'id': current.id, 'locale': locale})}}" method="post">
+            {{ form_errors(form) }}
+            <fieldset>
+
+                <div class="control-group">
+                    <label class="control-label" for="textarea">{{ "Description"|trans }}</label>
+                    <div class="controls">
+                       {{ form_widget(form.description )}}
+                    </div>
+                </div>
+
+                {{ form_rest(form) }}
+            <div class="form-actions">
+                <button id="btn-create" type="submit" class="btn btn-primary">{{ "Save"|trans }}</button>
+                <button id="btn-cancel" class="btn" data-dismiss="modal">Cancel</button>
+            </div>
+            </fieldset>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

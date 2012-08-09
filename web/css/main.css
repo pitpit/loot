@@ -20,3 +20,7 @@ body {
     float: left;
     background: no-repeat scroll url('/img/ajax-loader.gif') center center;
 }
+
+.button-control-head {
+    text-align: right;
+}

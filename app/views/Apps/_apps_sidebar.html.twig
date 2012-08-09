@@ -1,0 +1,10 @@
+<div class="span3">
+  <div class="well sidebar-nav">
+    <ul class="nav nav-list">
+        <li class="nav-header">{{ 'Your Apps'|trans }}</li>
+        {% for myApp in apps %}
+        <li {% if current and current.id == myApp.id %}class="active" {% endif %}><a href="{{ path('app_show', {'id':myApp.id, 'locale': locale}) }}">{{ myApp.name }}</a></li>
+        {% endfor %}
+    </ul>
+  </div><!--/.well -->
+</div>

@@ -52,7 +52,7 @@ class App
     protected $modified;
 
     /**
-     * @OneToMany(targetEntity="UserApp", mappedBy="app", cascade={"persist"})
+     * @OneToMany(targetEntity="UserApp", mappedBy="app", cascade={"persist", "remove"})
      **/
     protected $userApps;
 

@@ -8,6 +8,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Pitpit\Loot\Entity;
 use Pitpit\Loot\Form\Type\AppNameType;
+use Pitpit\Loot\Form\Type\AppEditType;
 
 class AppsController extends Controller
 {
@@ -40,6 +41,7 @@ class AppsController extends Controller
                 )));
             }
 
+            //this is a form to create a new app (hidden in a modal)
             $form = $app['form.factory']->create(new AppNameType(), new Entity\App());
 
             return $app['twig']->render('Apps/home.html.twig', array(
@@ -69,9 +71,10 @@ class AppsController extends Controller
             }
 
             if (null === $current) {
-                throw new NotFoundHttpException(sprintf('App "%s" does not exist or user "%s" is not allowed to access it', $id, $app['user']->getId()));
+                throw new AccessDeniedHttpException(sprintf('App "%s" does not exist or user "%s" is not allowed to access it', $id, $app['user']->getId()));
             }
 
+            //this is a form to create a new app (hidden in a modal)
             $form = $app['form.factory']->create(new AppNameType(), new Entity\App());
 
             return $app['twig']->render('Apps/show.html.twig', array(
@@ -84,12 +87,84 @@ class AppsController extends Controller
         ->assert('id', '\d+')
         ->bind('app_show');
 
+        $controllers->match('/{locale}/app/{id}/_edit', function($locale, $id) use ($app) {
+
+            if (!$app['user'] || !$app['user']->getIsDeveloper()) {
+                throw new AccessDeniedHttpException(sprintf('User "%s" is not allowed to access this area', $userId));
+            }
+
+            //get all apps of the current user
+            $apps = $app['em']->getRepository('Pitpit\Loot\Entity\App')->findByUserId($app['user']->getId());
+
+            //look for the current app
+            //this is also a security check
+            $current = null;
+            foreach ($apps as $myApp) {
+                if ($myApp->getId() == $id) {
+                    $current = $myApp;
+                    break;
+                }
+            }
+
+            if (null === $current) {
+                throw new AccessDeniedHttpException(sprintf('App "%s" does not exist or user "%s" is not allowed to access it', $id, $app['user']->getId()));
+            }
+
+            $form = $app['form.factory']->create(new AppEditType(), $current);
+
+
+            if ($app['request']->getMethod() == 'POST') {
+
+                $form->bindRequest($app['request']);
+                if ($form->isValid()) {
+
+                    $app['em']->persist($current);
+                    $app['em']->flush();
+
+                    return $app->redirect($app['url_generator']->generate('app_show', array(
+                        'id' => $current->getId(),
+                        'locale' => $locale,
+                    )));
+                }
+            }
+
+            return $app['twig']->render('Apps/edit.html.twig', array(
+                'apps' => $apps,
+                'current' => $current,
+                'form' => $form->createView()
+            ));
+
+        })
+        ->assert('id', '\d+')
+        ->bind('app_edit');
+
+        $controllers->get('/{locale}/app/{id}/_delete', function($locale, $id) use ($app) {
+
+            if (!$app['user'] || !$app['user']->getIsDeveloper()) {
+                throw new AccessDeniedHttpException(sprintf('User "%s" is not allowed to access this area', $userId));
+            }
+
+            //get all apps of the current user
+            $current = $app['em']->getRepository('Pitpit\Loot\Entity\App')->findOneByIdAndUserId($id, $app['user']->getId());
+
+            if (!$current) {
+                throw new AccessDeniedHttpException(sprintf('App "%s" does not exist or user "%s" is not allowed to access it', $id, $app['user']->getId()));
+            }
+
+            $app['em']->remove($current);
+            $app['em']->flush();
+
+            return $app->redirect($app['url_generator']->generate('apps', array(
+                'locale' => $locale,
+            )));
+        })
+        ->assert('id', '\d+')
+        ->bind('app_delete');
+
         /**
-         * Get the form to create a new app
-         *
          * @category ajax
          */
-        $controllers->post('/{locale}/app', function($locale) use ($app) {
+        $controllers->post('/{locale}/app/_create', function($locale) use ($app) {
 
             if (!$app['user'] || !$app['user']->getIsDeveloper()) {
                 throw new AccessDeniedHttpException(sprintf('User is not allowed to access this area'));
@@ -97,33 +172,31 @@ class AppsController extends Controller
 
             //@todo check the max number of apps
 
-            $newApp = new Entity\App();
+            $current = new Entity\App();
 
-            $form = $app['form.factory']->create(new AppNameType(), $newApp);
+            $form = $app['form.factory']->create(new AppNameType(), $current);
 
             $form->bindRequest($app['request']);
 
-            if ($form->isValid()) {
-
-                //check if an app with the same name exist
-                $samle = $app['em']->getRepository('Pitpit\Loot\Entity\App')->findOneByNameAndUserId($name, $app['user']->getId());
-                if ($same !== null) {
-                    throw new \Exception('An app with the same name already exists');
-                }
-
-                $newApp->addUser($app['user'], Entity\UserApp::CREATOR_ROLE);
-
-                $app['em']->persist($newApp);
-                $app['em']->flush();
-
-                // redirect somewhere
-                return $app->redirect($app['url_generator']->generate('app_show', array(
-                    'id' => $newApp->getId(),
-                    'locale' => $locale,
-                )));
-            } else {
-                throw new \Exception('Invalid form');
+            if (!$form->isValid()) {
+                throw new \Exception('Invalid form...', 400);
             }
+
+            //check if an app with the same name exist
+            $same = $app['em']->getRepository('Pitpit\Loot\Entity\App')->findOneByNameAndUserId($name, $app['user']->getId());
+            if ($same !== null) {
+                throw new \Exception('An app with the same name already exists', 400);
+            }
+
+            $current->addUser($app['user'], Entity\UserApp::CREATOR_ROLE);
+
+            $app['em']->persist($current);
+            $app['em']->flush();
+
+            return $app->redirect($app['url_generator']->generate('app_show', array(
+                'id' => $current->getId(),
+                'locale' => $locale,
+            )));
         })
         ->bind('app_create');
 
@@ -135,7 +208,7 @@ class AppsController extends Controller
          * @category ajax
          * @category api
          */
-        $controllers->get('/app.{_format}', function() use ($app) {
+        $controllers->get('/app/_query', function() use ($app) {
 
             if (!$app['user'] || !$app['user']->getIsDeveloper()) {
                 throw new AccessDeniedHttpException(sprintf('User is not allowed to access this area'));

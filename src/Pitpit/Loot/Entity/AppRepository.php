@@ -39,4 +39,22 @@ class AppRepository extends EntityRepository
 
         return $results[0];
     }
+
+    public function findOneByIdAndUserId($id, $userId)
+    {
+        $qb = $this->createQueryBuilder('a')
+            ->leftJoin('a.userApps', 'ua')
+            ->where('ua.user = :userId')
+            ->andWhere('a.id = :id')
+            ->setParameter('id', $id)
+            ->setParameter('userId', $userId)
+            ->setMaxResults(1);
+
+        $results = $qb->getQuery()->getResult();
+        if (count($results) == 0) {
+            return null;
+        }
+
+        return $results[0];
+    }
 }
