@@ -18,7 +18,7 @@
                 {% if apps|length < app.config.max_apps %}
                 <a class="btn" data-toggle="modal" href="#new-modal"><i class="icon-plus"></i> {{ "Create New App"|trans }}</a>
                 {% else %}
-                <a class="btn disabled" rel="popover" data-content="{{ '<p><strong>You are limited to %max_apps% apps creation</strong>.</p><p>We need time to make the service able to face the increasing number of users... If you feel really frustrated about that, please contact us.</p>'|trans({'%max_apps%': app.config.max_apps}) }}" data-original-title="{{ 'Sorry !'|trans }}"><i class="icon-plus"></i> {{ "Create New App"|trans }}</a>
+                <a class="btn disabled" rel="popover" data-content="{{ '<p><strong>Your account is limited to %max_apps% apps creation</strong>.</p><p>We need time to make the service able to face the increasing number of users... If you feel really frustrated about that, please contact us.</p>'|trans({'%max_apps%': app.config.max_apps}) }}" data-original-title="{{ 'Sorry !'|trans }}"><i class="icon-plus"></i> {{ "Create New App"|trans }}</a>
                 {% endif %}
             </div>
         </div>
