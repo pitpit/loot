@@ -7,8 +7,17 @@ Requirements
 * postgresql >= 8.4
 * postgis
 
+Under Debian:
+    
+    apt-get install postgresql postgresql-8.4-postgis php5-pgsql
+
 Installation
 ------------
+
+Init vendor lib:
+
+    curl -s https://getcomposer.org/installer | php
+
 
 Login with the postgres account:
 
