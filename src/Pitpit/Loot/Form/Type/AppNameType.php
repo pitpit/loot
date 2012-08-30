@@ -12,7 +12,9 @@ class AppNameType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $form = $builder->add('name');
+        $form = $builder->add('name', 'text', array(
+            'attr' => array('autocomplete' => 'off')
+        ));
     }
 
     public function getName()
