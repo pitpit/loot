@@ -56,9 +56,15 @@ class App
      **/
     protected $userApps;
 
+    /**
+     * @OneToMany(targetEntity="Object", mappedBy="app", cascade={"remove"})
+     **/
+    protected $objects;
+
     public function __construct()
     {
         $this->userApps = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->objects = new \Doctrine\Common\Collections\ArrayCollection();
         $this->created = new \Datetime();
         $this->modified = new \Datetime();
         $this->resetSecret();
