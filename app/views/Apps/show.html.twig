@@ -7,13 +7,15 @@
 
     <div class="span9">
         <div class="row">
-            <div class="span5">
+            <div class="span4">
                 <h1>{{ current.name }} </h1>
             </div>
-            <div class="span4 button-control-head">
-                {#<a class="btn btn-danger" href="#"><i class="icon-remove icon-white"></i> {{ "Delete App"|trans }}</a>#}
+            <div class="span5 button-control-head">
 
-                <a class="btn" href="{{ path('app_edit', {'id': current.id, 'locale': locale})}}"><i class="icon-edit"></i> {{ "Edit App"|trans }}</a>
+                <a class="btn" href="{{ path('app_edit', {'id': current.id, 'locale': locale})}}"><i class="icon-edit"></i> {{ "Edit"|trans }}</a>
+
+
+                 <a id="app-delete" type="submit" class="btn" href="{{ path('app_delete', {'id': current.id, 'locale': locale})}}"><i class="icon-remove"></i> {{ 'Delete'|trans }}</a>
 
                 {% if apps|length < app.config.max_apps %}
                 <a class="btn" data-toggle="modal" href="#new-modal"><i class="icon-plus"></i> {{ "Create New App"|trans }}</a>
@@ -30,18 +32,35 @@
         {% endif %}
         <div class="row">
             <div class="span5">
-                <table class="table table-condensed table-striped table-bordered">
-                    {#<thead>
+                <table class="table table-condensed table-bordered">
+                    <thead>
                         <tr>
                             <th collspan="2">{{ "Settings"|trans }}</th>
                         </tr>
-                    </thead>#}
+                    </thead>
                     <tr>
-                        <th>{{ "App ID" }}</th>
+                        <th>{{ "App ID"|trans }}</th>
                         <td>{{ current.id }}</td>
-                    </tr>        <tr>
-                        <th>{{ "App Secret" }}</th>
+                    </tr>
+                    <tr>
+                        <th>{{ "App Secret"|trans }}</th>
                         <td>{{ current.secret }}</td>
+                    </tr>
+                </table>
+
+                <table class="table table-condensed table-bordered">
+                    <thead>
+                        <tr>
+                            <th collspan="2">{{ "Stats"|trans }}</th>
+                        </tr>
+                    </thead>
+                    <tr>
+                        <th>{{ "Objects"|trans }}</th>
+                        <td>1000000</td>
+                    </tr>
+                    <tr>
+                        <th>{{ "Users"|trans }}</th>
+                        <td>1000000</td>
                     </tr>
                 </table>
             </div>
@@ -53,11 +72,28 @@
 {{ parent() }}
 {% if apps|length < app.config.max_apps %}
 {% include 'Apps/_new_form.html.twig' %}
-{% else %}
+{% endif %}
 <script type="text/javascript">
     $(function() {
+
+        {% if apps|length >= app.config.max_apps %}
         $('a[rel=popover]').popover({placement: 'bottom'})
+        {% endif %}
+
+        $('#app-delete').click(function() {
+
+            var href = $(this).attr('href');
+
+            $.fn.dialog2.helpers.confirm(
+                '{{ "WARNING ! All related date will be lost. Are you sure you want to delete <strong>%name%</strong> ?"|trans({"%name%": current.name})|raw }}',
+                {
+                    confirm: function() { window.location = href; },
+                    title: '{{ "Delete ?" }}'
+                }
+            );
+
+            event.preventDefault();
+        });
     });
-</script>#}
-{% endif %}
+</script>
 {% endblock %}

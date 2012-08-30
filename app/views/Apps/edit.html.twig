@@ -6,14 +6,7 @@
     {% include 'Apps/_apps_sidebar.html.twig' %}
 
     <div class="span9">
-        <div class="row">
-            <div class="span5">
-                <h1>{{ current.name }} </h1>
-            </div>
-            <div class="span4 button-control-head">
-                <a id="app-delete" type="submit" class="btn btn-danger" href="{{ path('app_delete', {'id': current.id, 'locale': locale})}}"><i class="icon-remove icon-white"></i> {{ 'Delete'|trans }}</a>
-            </div>
-        </div>
+        <h1>{{ current.name }} </h1>
 
         <hr />
 
@@ -38,24 +31,3 @@
     </div>
 </div>
 {% endblock %}
-{% block javascripts %}
-{{ parent() }}
-<script type="text/javascript">
-    $(function() {
-        $('#app-delete').click(function() {
-
-            var href = $(this).attr('href');
-
-            $.fn.dialog2.helpers.confirm(
-                '{{ "Are you sure you want to delete <strong>%name%</strong> ?"|trans({"%name%": current.name})|raw }}',
-                {
-                    confirm: function() { window.location = href; },
-                    title: '{{ "Delete ?" }}'
-                }
-            );
-
-            event.preventDefault();
-        });
-    });
-</script>
- {% endblock %}
