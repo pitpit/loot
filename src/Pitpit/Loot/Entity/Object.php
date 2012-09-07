@@ -3,7 +3,7 @@
 namespace Pitpit\Loot\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Pitpit\Doctrine\DBAL\Point;
+use Pitpit\PostGis\DBAL\Point;
 
 /**
  * @Entity

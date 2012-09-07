@@ -3,21 +3,23 @@
 namespace Pitpit\Loot\Controller;
 
 use Silex\Application;
-use Silex\ControllerCollection;
+use Silex\ControllerProviderInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Pitpit\Loot\Entity;
 use Pitpit\Loot\Form\Type\AppNameType;
 use Pitpit\Loot\Form\Type\AppEditType;
 
-class AppsController extends Controller
+class AppsControllerProvider implements ControllerProviderInterface
 {
-    protected static function build(Application $app, ControllerCollection $controllers)
+    public function connect(Application $app)
     {
+        $controllers = $app['controllers_factory'];
+        
         //load current user from session & database
         //@todo move it in a global place
         $app['user'] = $app->share(function () use ($app) {
-            $userId = 2;
+            $userId = 4;
             return $app['em']->getRepository('Pitpit\Loot\Entity\User')->findOneById($userId);
         });
 
@@ -29,7 +31,7 @@ class AppsController extends Controller
         $controllers->get('/{locale}/apps', function($locale) use ($app) {
 
             if (!$app['user'] || !$app['user']->getIsDeveloper()) {
-                throw new AccessDeniedHttpException(sprintf('User "%s" is not allowed to access this area', $userId));
+                throw new AccessDeniedHttpException('User is not allowed to access this area');
             }
 
             $apps = $app['em']->getRepository('Pitpit\Loot\Entity\App')->findByUserId($app['user']->getId(), 1);
@@ -241,5 +243,7 @@ class AppsController extends Controller
         })
         ->assert('_format', 'json')
         ->bind('api_app');
+
+        return $controllers;
     }
 }

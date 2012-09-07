@@ -1,0 +1,23 @@
+translation:
+  locale_fallback: fr_FR
+  locales:
+    fr_FR: fr_FR.yml
+
+db:
+  driver:   pdo_pgsql
+  name:     loot
+  host:     localhost
+  user:     loot
+  password: loot
+
+em:
+  entities: [src/Pitpit/Loot/Entity]
+  fixtures: [src/Pitpit/Loot/DataFixtures/ORM]
+
+translator:
+  locale_fallback: en_UK
+  locales:
+    fr_FR: fr_FR.yml
+
+app:
+  max_apps: 10

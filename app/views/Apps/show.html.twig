@@ -17,10 +17,10 @@
 
                  <a id="app-delete" type="submit" class="btn" href="{{ path('app_delete', {'id': current.id, 'locale': locale})}}"><i class="icon-remove"></i> {{ 'Delete'|trans }}</a>
 
-                {% if apps|length < app.config.max_apps %}
+                {% if apps|length < app.config['app']['max_apps'] %}
                 <a class="btn" data-toggle="modal" href="#new-modal"><i class="icon-plus"></i> {{ "Create New App"|trans }}</a>
                 {% else %}
-                <a class="btn disabled" rel="popover" data-content="{{ '<p><strong>Your account is limited to %max_apps% apps creation</strong>.</p><p>We need time to make the service able to face the increasing number of users... If you feel really frustrated about that, please contact us.</p>'|trans({'%max_apps%': app.config.max_apps}) }}" data-original-title="{{ 'Sorry !'|trans }}"><i class="icon-plus"></i> {{ "Create New App"|trans }}</a>
+                <a class="btn disabled" rel="popover" data-content="{{ '<p><strong>Your account is limited to %max_apps% apps creation</strong>.</p><p>We need time to make the service able to face the increasing number of users... If you feel really frustrated about that, please contact us.</p>'|trans({'%max_apps%': app.config['app']['max_apps']}) }}" data-original-title="{{ 'Sorry !'|trans }}"><i class="icon-plus"></i> {{ "Create New App"|trans }}</a>
                 {% endif %}
             </div>
         </div>
@@ -70,13 +70,13 @@
 {% endblock %}
 {% block javascripts %}
 {{ parent() }}
-{% if apps|length < app.config.max_apps %}
+{% if apps|length < app.config['app']['max_apps'] %}
 {% include 'Apps/_new_form.html.twig' %}
 {% endif %}
 <script type="text/javascript">
     $(function() {
 
-        {% if apps|length >= app.config.max_apps %}
+        {% if apps|length >= app.config['app']['max_apps'] %}
         $('a[rel=popover]').popover({placement: 'bottom'})
         {% endif %}
 

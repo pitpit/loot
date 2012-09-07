@@ -1,74 +1,78 @@
 <?php
 
-use Silex\Provider as SilexProvider;
-use Symfony\Component\Translation\Loader\YamlFileLoader;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Pitpit\Silex\Provider as PitpitProvider;
-
-$config = require __DIR__ . '/config/config.php';
+require_once __DIR__.'/../vendor/autoload.php';
 
 $app = new Silex\Application();
 
 if (PHP_SAPI === 'cli') {
-    $app->register(new PitpitProvider\ConsoleServiceProvider());
+    $app->register(new Digex\Provider\ConsoleServiceProvider());
 }
 
-$app->register(new SilexProvider\DoctrineServiceProvider(), array(
+$app->register(new Digex\Provider\ConfigurationServiceProvider(), array(
+    'config.config_dir'    => __DIR__ . '/config',
+));
+
+$app->register(new Silex\Provider\DoctrineServiceProvider(), array(
     'db.options' => array(
-        'driver'    => $config['db']['driver'],
-        'dbname'    => $config['db']['name'],
-        'host'      => $config['db']['host'],
-        'user'      => $config['db']['user'],
-        'password'  => $config['db']['password'],
+        'driver'    => $app['config']['db']['driver'],
+        'dbname'    => $app['config']['db']['name'],
+        'host'      => $app['config']['db']['host'],
+        'user'      => $app['config']['db']['user'],
+        'password'  => $app['config']['db']['password'],
     )
 ));
 
-$app->register(new PitpitProvider\DoctrineORMServiceProvider(), array(
+$app->register(new Digex\Provider\DoctrineORMServiceProvider(), array(
     'em.options' => array(
         'proxy_dir'         => __DIR__ . '/cache/proxies',
         'proxy_namespace'   => 'DoctrineORMProxy',
-        'entities'          => $config['em']['entities']
+        'entities'          => $app['config']['em']['entities']
     ),
-    'em.fixtures'              => $config['em']['fixtures'],
+    'em.fixtures'              => $app['config']['em']['fixtures'],
 ));
 
-$app->register(new PitpitProvider\DoctrineGeoServiceProvider());
+$app->register(new Pitpit\PostGis\Provider\PostGisServiceProvider());
 
-$app->register(new SilexProvider\UrlGeneratorServiceProvider());
+$app->register(new Silex\Provider\UrlGeneratorServiceProvider());
 
-$app->register(new SilexProvider\TranslationServiceProvider(), array(
-    'locale_fallback' => $config['translator']['default_locale']
+$app->register(new Silex\Provider\TranslationServiceProvider(), array(
+    'locale_fallback' => $app['config']['translator']['locale_fallback']
 ));
 
-$app['translator'] = $app->share($app->extend('translator', function($translator, $app) use($config) {
-    $translator->addLoader('yaml', new YamlFileLoader());
+$app['translator'] = $app->share($app->extend('translator', function($translator, $app) use($app) {
+    $translator->addLoader('yaml', new Symfony\Component\Translation\Loader\YamlFileLoader());
 
-    foreach($config['translator']['locales'] as $locale => $filename) {
+    foreach($app['config']['translator']['locales'] as $locale => $filename) {
         $translator->addResource('yaml', __DIR__ . '/trans/' . $filename, $locale);
     }
 
     return $translator;
 }));
 
-$app->register(new SilexProvider\FormServiceProvider());
+$app->register(new Silex\Provider\FormServiceProvider());
 
-$app->register(new SilexProvider\TwigServiceProvider(), array(
+$app->register(new Silex\Provider\TwigServiceProvider(), array(
     'twig.path' => __DIR__ . '/views',
     'cache' => __DIR__ . '/cache/twig',
     //'twig.form.templates' => array('Form/fields.html.twig')
 ));
 
-//set locale
-$app->before(function () use ($app, $config) {
-    $locale = $app['request']->get('locale');
-    if ($locale) { //ignore routes that do not support locale as parameter
-        if (!isset($config['translator']['locales'][$locale]) && $locale != $config['translator']['default_locale']) {
-            throw new NotFoundHttpException(sprintf('Locale "%s" is not supported', $locale));
-        }
-        $app['twig']->addGlobal('locale', $locale);
-    }
-});
+if (PHP_SAPI !== 'cli') {
 
-$app['config'] = $config['app'];
+    //Set locale
+    $app->before(function () use ($app) {
+        $locale = $app['request']->get('locale');
+        if ($locale) { //ignore routes that do not support locale as parameter
+            if (!isset($app['config']['translator']['locales'][$locale]) && $locale != $app['config']['translator']['locale_fallback']) {
+                throw new Symfony\Component\HttpKernel\Exception\NotFoundHttpException(sprintf('Locale "%s" is not supported', $locale));
+            }
+            $app['twig']->addGlobal('locale', $locale);
+        }
+    });
+
+    //Register your controllers here...
+    $app->mount('/api', new Pitpit\Loot\Controller\ApiControllerProvider());
+    $app->mount('/', new Pitpit\Loot\Controller\AppsControllerProvider());
+}
 
 return $app;

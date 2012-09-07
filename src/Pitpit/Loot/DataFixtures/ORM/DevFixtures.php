@@ -1,10 +1,10 @@
 <?php
 
-namespace Pitpit\Loot\DataFixtures;
+namespace Pitpit\Loot\DataFixtures\ORM;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\FixtureInterface;
-use Pitpit\Doctrine\DBAL\Point;
+use Pitpit\PostGis\DBAL\Point;
 use Pitpit\Loot\Entity;
 
 class DevFixtures implements FixtureInterface

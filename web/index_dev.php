@@ -1,15 +1,11 @@
 <?php
 
-ini_set('display_errors', 1);
+//umask(0000);  //This will let the permissions be 0777
 
-require_once __DIR__.'/../vendor/autoload.php';
-
-use Pitpit\Loot\Controller;
+ini_set('display_errors', 1); 
+error_reporting(E_ALL);
 
 $app = require __DIR__.'/../app/app.php';
 $app['debug'] = true;
-
-Controller\ApiController::mount($app, '/api');
-Controller\AppsController::mount($app, '/');
-
+$app['env'] = 'dev';
 $app->run();

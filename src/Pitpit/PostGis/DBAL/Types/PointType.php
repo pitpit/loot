@@ -1,10 +1,10 @@
 <?php
 
-namespace Pitpit\Doctrine\DBAL\Types;
+namespace Pitpit\PostGis\DBAL\Types;
 
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
-use Pitpit\Doctrine\DBAL\Point;
+use Pitpit\PostGis\DBAL\Point;
 
 /**
  * Only support Postgis for now

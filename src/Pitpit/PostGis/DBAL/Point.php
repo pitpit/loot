@@ -1,6 +1,6 @@
 <?php
 
-namespace Pitpit\Doctrine\DBAL;
+namespace Pitpit\PostGis\DBAL;
 
 class Point
 {
