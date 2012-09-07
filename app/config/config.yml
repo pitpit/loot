@@ -21,3 +21,4 @@ translator:
 
 app:
   max_apps: 10
+  api_version: 1.0.0-alpha

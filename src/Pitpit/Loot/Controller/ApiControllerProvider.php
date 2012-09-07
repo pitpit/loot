@@ -11,8 +11,14 @@ class ApiControllerProvider implements ControllerProviderInterface
     {
         $controllers = $app['controllers_factory'];
         
-        $controllers->get('/', function () {
-            return 'Blog home page';
+        $controllers->get('/', function () use($app) {
+
+            return $app->json(array('name' => 'loot', 'version' => $app['config']['app']['api_version']));
+        });
+
+        $controllers->get('/{appId}', function ($appId) use($app) {
+
+            return $app->json(array('name' => 'loot', 'version' => $app['config']['app']['api_version']));
         });
 
         return $controllers;
