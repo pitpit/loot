@@ -57,22 +57,19 @@ $app->register(new Silex\Provider\TwigServiceProvider(), array(
     //'twig.form.templates' => array('Form/fields.html.twig')
 ));
 
-if (PHP_SAPI !== 'cli') {
-
-    //Set locale
-    $app->before(function () use ($app) {
-        $locale = $app['request']->get('locale');
-        if ($locale) { //ignore routes that do not support locale as parameter
-            if (!isset($app['config']['translator']['locales'][$locale]) && $locale != $app['config']['translator']['locale_fallback']) {
-                throw new Symfony\Component\HttpKernel\Exception\NotFoundHttpException(sprintf('Locale "%s" is not supported', $locale));
-            }
-            $app['twig']->addGlobal('locale', $locale);
+//Set locale
+$app->before(function () use ($app) {
+    $locale = $app['request']->get('locale');
+    if ($locale) { //ignore routes that do not support locale as parameter
+        if (!isset($app['config']['translator']['locales'][$locale]) && $locale != $app['config']['translator']['locale_fallback']) {
+            throw new Symfony\Component\HttpKernel\Exception\NotFoundHttpException(sprintf('Locale "%s" is not supported', $locale));
         }
-    });
+        $app['twig']->addGlobal('locale', $locale);
+    }
+});
 
-    //Register your controllers here...
-    $app->mount('/api', new Pitpit\Loot\Controller\ApiControllerProvider());
-    $app->mount('/', new Pitpit\Loot\Controller\AppsControllerProvider());
-}
+//Register your controllers here...
+$app->mount('/api', new Pitpit\Loot\Controller\ApiControllerProvider());
+$app->mount('/', new Pitpit\Loot\Controller\AppsControllerProvider());
 
 return $app;
