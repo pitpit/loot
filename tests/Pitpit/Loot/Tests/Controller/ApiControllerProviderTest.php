@@ -10,7 +10,13 @@ class ApiControllerProviderTest extends WebTestCase
     {
         $client = $this->createClient();
         $crawler = $client->request('GET', '/api/');
+        $response = $client->getResponse();
+        $data = json_decode($response->getContent(), true);
 
-        $this->assertTrue($client->getResponse()->isOk());
+        $this->assertTrue($response->isOk());
+        $this->assertNotNull($data);
+        $this->assertArrayHasKey('name', $data);
+        $this->assertArrayHasKey('version', $data);
+        $this->assertEquals('loot', $data['name']);
     }
 }
