@@ -1,7 +1,5 @@
 <?php
 
-require_once __DIR__.'/../vendor/autoload.php';
-
 $app = new Silex\Application();
 
 if (PHP_SAPI === 'cli') {
@@ -10,6 +8,7 @@ if (PHP_SAPI === 'cli') {
 
 $app->register(new Digex\Provider\ConfigurationServiceProvider(), array(
     'config.config_dir'    => __DIR__ . '/config',
+    'config.env'    => isset($env)?$env:null,
 ));
 
 $app->register(new Silex\Provider\DoctrineServiceProvider(), array(

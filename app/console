@@ -2,15 +2,13 @@
 <?php
 
 //umask(0000); //This will let the permissions be 0777
-
 set_time_limit(0);
 
-$app = require __DIR__.'/app.php';
+require_once __DIR__.'/../vendor/autoload.php';
 
 $input = new \Symfony\Component\Console\Input\ArgvInput();
 $debug = !$input->hasParameterOption(array('--no-debug', ''));
 $env = $input->getParameterOption(array('--env', '-e'), getenv('SYMFONY_ENV') ?: 'dev');
 
-
-$app['env'] = $env;
+$app = require __DIR__.'/app.php';
 $app['console']->run();

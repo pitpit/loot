@@ -1,0 +1,3 @@
+db:
+  driver:   pdo_pgsql
+  name:     loot_test
