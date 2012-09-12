@@ -4,23 +4,28 @@ namespace Pitpit\PostGis\DBAL;
 
 class Point
 {
-    private $lat;
-    private $lon;
+    private $latitude;
+    private $longitude;
     public static $SRID = '4326';
 
-    public function __construct($lon, $lat)
+    public function __construct($longitude, $latitude)
     {
-        $this->lat = $lat;
-        $this->lon = $lon;
+        $this->lat = $latitude;
+        $this->longitude = $longitude;
 
-        if (!(($lon > -180 && $lon < 180) && ($lat > -90 && $lat < 90))) {
+        if (!(($longitude > -180 && $longitude < 180) && ($latitude > -90 && $latitude < 90))) {
             throw new \OutOfRangeException('Invalid longitude or latitude');
         }
     }
 
+    public function getLatitude()
+    {
+        return $this->latitude;
+    }
+
     public function toGeoJson()
     {
-        $array = array("type" => "Point", "coordinates" => array ($this->lon, $this->lat));
+        $array = array("type" => "Point", "coordinates" => array ($this->longitude, $this->latitude));
 
         return \json_encode($array);
     }
@@ -31,11 +36,11 @@ class Point
      */
     public function toWKT()
     {
-        return 'SRID='.self::$SRID.';POINT('.$this->lon.' '.$this->lat.')';
+        return 'SRID='.self::$SRID.';POINT('.$this->longitude.' '.$this->latitude.')';
     }
 
     /**
-     *
+     * Create a Point from a GEO Json
      * @param string $geojson
      * @return Point
      */
@@ -50,10 +55,10 @@ class Point
         if ($a->type != "Point") {
             throw new \InvalidArgumentException('Invalid geo type');
         } else {
-            $lat = $a->coordinates[0];
-            $lon = $a->coordinates[1];
+            $latitude = $a->coordinates[0];
+            $longitude = $a->coordinates[1];
 
-            return new self($lon, $lat);
+            return new self($lon, $latitude);
         }
     }
 }
