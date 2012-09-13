@@ -30,7 +30,7 @@ $app->register(new Digex\Provider\DoctrineORMServiceProvider(), array(
     'em.fixtures'              => $app['config']['em']['fixtures'],
 ));
 
-$app->register(new Pitpit\PostGis\Provider\PostGisServiceProvider());
+$app->register(new Pitpit\Geo\Provider\PostGisServiceProvider());
 
 $app->register(new Silex\Provider\UrlGeneratorServiceProvider());
 

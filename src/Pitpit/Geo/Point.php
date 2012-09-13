@@ -1,16 +1,17 @@
 <?php
 
-namespace Pitpit\PostGis\DBAL;
+namespace Pitpit\Geo;
 
 class Point
 {
-    private $latitude;
-    private $longitude;
+    protected $latitude;
+    protected $longitude;
+    
     public static $SRID = '4326';
 
     public function __construct($longitude, $latitude)
     {
-        $this->lat = $latitude;
+        $this->latitude = $latitude;
         $this->longitude = $longitude;
 
         if (!(($longitude > -180 && $longitude < 180) && ($latitude > -90 && $latitude < 90))) {
@@ -36,7 +37,7 @@ class Point
      */
     public function toWKT()
     {
-        return 'SRID='.self::$SRID.';POINT('.$this->longitude.' '.$this->latitude.')';
+        return 'SRID=' . self::$SRID . ';POINT(' . $this->longitude . ' ' . $this->latitude . ')';
     }
 
     /**
@@ -47,7 +48,7 @@ class Point
     public static function fromGeoJson($geojson)
     {
         $a = json_decode($geojson);
-        //check if the geojson string is correct
+
         if ($a == null or !isset($a->type) or !isset($a->coordinates)) {
             throw new \InvalidArgumentException('Invalid geo json');
         }

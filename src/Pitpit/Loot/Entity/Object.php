@@ -3,13 +3,14 @@
 namespace Pitpit\Loot\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Pitpit\PostGis\DBAL\Point;
+use Pitpit\Geo\Point;
+use Pitpit\Geo\LocatableInterface;
 
 /**
  * @Entity
  * @Table(name="object")
  */
-class Object
+class Object implements LocatableInterface
 {
     /**
      * @Id
@@ -21,7 +22,7 @@ class Object
     /**
      * @Column(type="point")
      */
-    protected $position;
+    protected $location;
 
     /**
      * @ManyToOne(targetEntity="App")
@@ -35,11 +36,11 @@ class Object
      **/
     protected $creator;
 
-    public function __construct(App $app, User $creator, Point $position)
+    public function __construct(App $app, User $creator, Point $location)
     {
         $this->setApp($app);
         $this->setCreator($creator);
-        $this->setPosition($position);
+        $this->setLocation($location);
     }
 
     public function getApp()
@@ -62,13 +63,13 @@ class Object
         $this->creator = $creator;
     }
 
-    public function setPosition(Point $point)
+    public function setLocation(Point $point)
     {
-        $this->position = $point;
+        $this->location = $point;
     }
 
-    public function getPosition()
+    public function getLocation()
     {
-        return $this->position;
+        return $this->location;
     }
 }

@@ -3,6 +3,8 @@
 namespace Pitpit\Loot\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Pitpit\Geo\Point;
+use Pitpit\Geo\LocatableInterface;
 
 /**
  * @Entity(repositoryClass="Pitpit\Loot\Entity\AppRepository")
@@ -17,7 +19,7 @@ use Doctrine\ORM\Mapping as ORM;
  * - "user" is a reserved word and is bugprone with postgreSQL
  *
  */
-class User
+class User implements LocatableInterface
 {
     /**
      * @Id
@@ -30,6 +32,11 @@ class User
      * @Column(type="string", length=255)
      */
     protected $email;
+
+    /**
+     * @Column(type="point", nullable=true)
+     */
+    protected $location;
 
     /**
      *@Column(name="is_developer", type="boolean")
@@ -77,6 +84,16 @@ class User
     public function getEmail()
     {
         return $this->email;
+    }
+
+    public function setLocation(Point $point)
+    {
+        $this->location = $point;
+    }
+
+    public function getLocation()
+    {
+        return $this->location;
     }
 
     public function setIsDeveloper($isDeveloper)

@@ -1,10 +1,10 @@
 <?php
 
-namespace Pitpit\PostGis\DBAL\Types;
+namespace Pitpit\Geo\DBAL\Types;
 
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
-use Pitpit\PostGis\DBAL\Point;
+use Pitpit\Geo\Point;
 
 /**
  * Only support Postgis for now
@@ -42,6 +42,10 @@ class PointType extends Type
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
+        if (null === $value) {
+            return null;
+        }
+
         return $value->toWKT();
     }
 

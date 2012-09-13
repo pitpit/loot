@@ -7,6 +7,31 @@ use Pitpit\Loot\Entity;
 
 class ApiControllerProviderTest extends WebTestCase
 {
+    protected function getTestApp()
+    {
+        $app = new Entity\App();
+        $app->setName('test app');
+        $app->setDescription('test description');
+        $this->app['em']->persist($app);
+        $this->app['em']->flush();
+
+        return $app;
+    }
+
+    protected function getTestUser()
+    {
+        $user = new Entity\User();
+        $user->setEmail('test@test.fr');
+        $this->app['em']->persist($user);
+        $this->app['em']->flush();
+
+        return $user;
+    }
+
+    /*
+     * api
+     */
+
     public function testGetApi()
     {
         $client = $this->createClient();
@@ -21,26 +46,24 @@ class ApiControllerProviderTest extends WebTestCase
         $this->assertArrayHasKey('version', $data);
     }
 
+    /*
+     * api/app
+     */
+
     public function testGetApp()
     {
         $client = $this->createClient();
 
-        $app1 = new Entity\App();
-        $app1->setName('test app');
-        // $app1->addUser($user, Entity\UserApp::CREATOR_ROLE);
-        $app1->setDescription('test description');
-        $this->app['em']->persist($app1);
-        $this->app['em']->flush();
+        $app = $this->getTestApp();
 
-        $id = $app1->getId();
-
-        $crawler = $client->request('GET', '/api/app/' . $id);
+        $crawler = $client->request('GET', '/api/app/' . $app->getId());
         $response = $client->getResponse();
         $data = json_decode($response->getContent(), true);
 
         $this->assertTrue($response->isOk());
         $this->assertNotNull($data);
 
+        $this->assertEquals($app->getId(), $data['id']);
         $this->assertEquals('test app', $data['name']);
         $this->assertEquals('test description', $data['description']);
     }
@@ -76,5 +99,108 @@ class ApiControllerProviderTest extends WebTestCase
         $data = json_decode($response->getContent(), true);
 
         $this->assertTrue($response->isNotFound());
+    }
+
+    /*
+     * api/me
+     */
+
+    public function testGetMeUnknownLocation()
+    {
+        $this->markTestIncomplete('Not implemented yet.');
+        
+        $user = $this->getTestUser();
+
+        $client = $this->createClient();
+        $crawler = $client->request('GET', '/api/me');
+        $response = $client->getResponse();
+        $data = json_decode($response->getContent(), true);
+
+        $this->assertTrue($response->isOk());
+        $this->assertNotNull($data);
+
+        $this->assertEquals($user->getId(), $data['id']);
+        $this->assertArrayHasKey('location', $data);
+        $this->assertNull($data['location']);
+    }
+
+    public function testGetMe()
+    {
+        $this->markTestIncomplete('Not implemented yet.');
+
+        $user = $this->getTestUser();
+
+        $client = $this->createClient();
+        $crawler = $client->request('GET', '/api/me');
+        $response = $client->getResponse();
+        $data = json_decode($response->getContent(), true);
+
+        $this->assertTrue($response->isOk());
+        $this->assertNotNull($data);
+
+        $this->assertEquals($user->getId(), $data['id']);
+        $this->assertArrayHasKey('location', $data);
+        $this->assertArrayHasKey('location', $data);
+    }
+
+    public function testSetMeLocation()
+    {
+        $this->markTestIncomplete('Not implemented yet.');
+
+        $user = $this->getTestUser();
+
+        $data = array(
+            'location' => array(
+                'type' => 'Point',
+                'coordinates' => array(2.291816, 48.898173)
+            )
+        );
+        $content = json_encode($data);
+
+        $client = $this->createClient();
+        $crawler = $client->request('PUT', '/api/me', array(), array(), array(), $content);
+
+        $user = $this->app['em']->getRepository('Pitpit\Loot\Entity\User')->findOneById($user->getId());
+        $this->assertNotNull($user->getLocation());
+        $this->assertEquals(2.291816, $user->getLocation()->getLatitude());
+        $this->assertEquals(48.898173, $user->getLocation()->getLongitude());
+    }
+
+    public function testSetMeLocationWrongFormat()
+    {
+        $this->markTestIncomplete('Test that the json is in GeoJSON format. Not implemented yet.');
+    }
+
+    public function testGetClosestObjectsUnknownUserLocation()
+    {
+        $this->markTestIncomplete('Not implemented yet.');
+
+        $app = $this->getTestApp();
+        $id = $app->getId();
+
+        //@todo should throw a 40x http error
+    }
+
+    public function testGetClosestObjectsNoObjects()
+    {
+        $this->markTestIncomplete('Not implemented yet.');
+
+        $client = $this->createClient();
+
+        $app = $this->getTestApp();
+
+        $latitude = '';
+        $longitude = '';
+
+        $crawler = $client->request('GET', '/api/app/' . $app->getId(). '/objects');
+        $response = $client->getResponse();
+        $data = json_decode($response->getContent(), true);
+
+        $this->assertTrue($response->isOk());
+        $this->assertNotNull($data);
+
+        $this->assertEquals($app->getId(), $data['id']);
+        $this->assertEquals('0', $data['count']);
+        $this->assertEquals(array(), $data['objects']);
     }
 }
