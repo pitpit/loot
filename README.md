@@ -8,7 +8,7 @@ Requirements
 * postgis
 
 Under Debian:
-    
+
     apt-get install postgresql postgresql-8.4-postgis php5-pgsql
     /etc/init.d/apache2 restart
 
@@ -20,10 +20,11 @@ Installation
 Login with the postgres account:
 
     su postgres
+    psql template1
 
 Create the user:
 
-    createuser loot -P -D -A
+    createuser loot -P -A -d -r
 
 Create the database:
 
@@ -55,3 +56,14 @@ Init schema and create fixtures:
 
     php app/console doctrine:schema:create
     php app/console doctrine:fixtures:load
+
+Running the test
+----------------
+
+    composer install --dev
+    dropdb loot_test
+    createdb -O loot -E UNICODE loot_test
+    createlang plpgsql loot_test
+    psql -d loot_test -f /usr/share/postgresql/8.4/contrib/postgis-1.5/postgis.sql
+    php app/console doctrine:schema:create --env=test
+    phpunit -c app/phpunit.xml
