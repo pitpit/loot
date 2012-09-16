@@ -31,7 +31,6 @@ class ApiControllerProviderTest extends WebTestCase
     /*
      * api
      */
-
     public function testGetApi()
     {
         $client = $this->createClient();
@@ -41,7 +40,7 @@ class ApiControllerProviderTest extends WebTestCase
 
         $this->assertTrue($response->isOk());
         $this->assertNotNull($data);
-        
+
         $this->assertEquals('loot', $data['name']);
         $this->assertArrayHasKey('version', $data);
     }
@@ -49,7 +48,6 @@ class ApiControllerProviderTest extends WebTestCase
     /*
      * api/app
      */
-
     public function testGetApp()
     {
         $client = $this->createClient();
@@ -76,7 +74,7 @@ class ApiControllerProviderTest extends WebTestCase
         $response = $client->getResponse();
         $data = json_decode($response->getContent(), true);
 
-        $this->assertTrue($response->isNotFound());
+        $this->assertEquals(404, $response->getStatusCode(), 'Should return a 404 error');
     }
 
     public function testGetAppNullId()
@@ -87,7 +85,7 @@ class ApiControllerProviderTest extends WebTestCase
         $response = $client->getResponse();
         $data = json_decode($response->getContent(), true);
 
-        $this->assertTrue($response->isNotFound());
+        $this->assertEquals(404, $response->getStatusCode(), 'Should return a 404 error');
     }
 
     public function testGetAppNonNumericId()
@@ -98,17 +96,21 @@ class ApiControllerProviderTest extends WebTestCase
         $response = $client->getResponse();
         $data = json_decode($response->getContent(), true);
 
-        $this->assertTrue($response->isNotFound());
+        $this->assertEquals(404, $response->getStatusCode(), 'Should return a 404 error');
     }
 
     /*
      * api/me
      */
+    public function testGetMeNotLogged()
+    {
+        $this->markTestIncomplete('Not implemented yet.');
+    }
 
     public function testGetMeUnknownLocation()
     {
         $this->markTestIncomplete('Not implemented yet.');
-        
+
         $user = $this->getTestUser();
 
         $client = $this->createClient();
@@ -164,6 +166,11 @@ class ApiControllerProviderTest extends WebTestCase
         $this->assertNotNull($user->getLocation());
         $this->assertEquals(2.291816, $user->getLocation()->getLatitude());
         $this->assertEquals(48.898173, $user->getLocation()->getLongitude());
+    }
+
+    public function testSetMeNotLogged()
+    {
+        $this->markTestIncomplete('Not implemented yet.');
     }
 
     public function testSetMeLocationWrongFormat()

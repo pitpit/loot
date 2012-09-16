@@ -12,9 +12,10 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class UserApp
 {
-    const DEVELOPER_ROLE = 1;
-    const ADMIN_ROLE = 2;
-    const CREATOR_ROLE = 4;
+    const USER_ROLE = 1;
+    const DEVELOPER_ROLE = 2;
+    const ADMIN_ROLE = 4;
+    const CREATOR_ROLE = 8;
 
     /**
      * @Id
@@ -35,7 +36,7 @@ class UserApp
      */
     protected $role;
 
-    public function __construct(App $app, User $user, $role)
+    public function __construct(App $app, User $user, $role = self::USER_ROLE)
     {
         $this->app = $app;
         $this->user = $user;
