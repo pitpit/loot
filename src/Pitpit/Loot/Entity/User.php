@@ -34,6 +34,11 @@ class User implements LocatableInterface
     protected $email;
 
     /**
+     * @Column(type="string", length=255)
+     */
+    protected $password;
+
+    /**
      * @Column(type="point", nullable=true)
      */
     protected $location;
@@ -84,6 +89,16 @@ class User implements LocatableInterface
     public function getEmail()
     {
         return $this->email;
+    }
+
+    public function setPassword($password)
+    {
+        $this->password = $password;
+    }
+
+    public function getPassword()
+    {
+        return $this->password;
     }
 
     public function setLocation(Point $point)

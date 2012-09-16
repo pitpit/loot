@@ -15,7 +15,7 @@ class AppsControllerProvider implements ControllerProviderInterface
     public function connect(Application $app)
     {
         $controllers = $app['controllers_factory'];
-        
+
         //load current user from session & database
         //@todo move it in a global place
         $app['user'] = $app->share(function () use ($app) {

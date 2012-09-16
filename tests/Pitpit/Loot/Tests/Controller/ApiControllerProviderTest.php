@@ -50,10 +50,9 @@ class ApiControllerProviderTest extends WebTestCase
      */
     public function testGetApp()
     {
-        $client = $this->createClient();
-
         $app = $this->getTestApp();
 
+        $client = $this->createClient();
         $crawler = $client->request('GET', '/api/app/' . $app->getId());
         $response = $client->getResponse();
         $data = json_decode($response->getContent(), true);
@@ -80,7 +79,6 @@ class ApiControllerProviderTest extends WebTestCase
     public function testGetAppNullId()
     {
         $client = $this->createClient();
-
         $crawler = $client->request('GET', '/api/app/');
         $response = $client->getResponse();
         $data = json_decode($response->getContent(), true);
@@ -91,8 +89,25 @@ class ApiControllerProviderTest extends WebTestCase
     public function testGetAppNonNumericId()
     {
         $client = $this->createClient();
-
         $crawler = $client->request('GET', '/api/app/zzz');
+        $response = $client->getResponse();
+        $data = json_decode($response->getContent(), true);
+
+        $this->assertEquals(404, $response->getStatusCode(), 'Should return a 404 error');
+    }
+
+    /*
+     * login
+     */
+    public function testLoginWithEmail()
+    {
+        $user = $this->getTestUser();
+
+        $client = $this->createClient();
+        $crawler = $client->request('POST', '/login', array(
+            'email' => $user->getEmail(),
+            'password' => 'apassword'
+        ));
         $response = $client->getResponse();
         $data = json_decode($response->getContent(), true);
 
@@ -105,6 +120,12 @@ class ApiControllerProviderTest extends WebTestCase
     public function testGetMeNotLogged()
     {
         $this->markTestIncomplete('Not implemented yet.');
+
+        $client = $this->createClient();
+        $crawler = $client->request('GET', '/api/me');
+        $response = $client->getResponse();
+
+        $this->assertEquals(403, $response->getStatusCode(), 'Should return a 403 error');
     }
 
     public function testGetMeUnknownLocation()
