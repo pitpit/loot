@@ -32,6 +32,10 @@ class PointType extends Type
      */
     public function convertToPHPValue($value, AbstractPlatform $platform)
     {
+        if (null === $value) {
+            return null;
+        }
+        
         return Point::fromGeoJson($value);
     }
 
