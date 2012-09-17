@@ -14,6 +14,7 @@ class DevFixtures implements FixtureInterface
         $user = new Entity\User();
         $user->setIsDeveloper(true);
         $user->setEmail('damien.pitard@gmail.com');
+        $user->setPassword('5FZ2Z8QIkA7UTZ4BYkoC+GsReLf569mSKDsfods6LYQ8t+a8EW9oaircfMpmaLbPBh4FOBiiFyLfuZmTSUwzZg=='); //foo
         $manager->persist($user);
 
         $app1 = new Entity\App();
