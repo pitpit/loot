@@ -16,23 +16,12 @@ class AppsControllerProvider implements ControllerProviderInterface
     {
         $controllers = $app['controllers_factory'];
 
-        //load current user from session & database
-        //@todo move it in a global place
-        $app['user'] = $app->share(function () use ($app) {
-            $userId = 5;
-            return $app['em']->getRepository('Pitpit\Loot\Entity\User')->findOneById($userId);
-        });
-
         /**
          * The apps homepage
          *   - if the user has no apps, we provide a standard page
          *   - else the user is redirected to its first app
          */
         $controllers->get('/{locale}/apps', function($locale) use ($app) {
-
-            if (!$app['user'] || !$app['user']->getIsDeveloper()) {
-                throw new AccessDeniedHttpException('User is not allowed to access this area');
-            }
 
             $apps = $app['em']->getRepository('Pitpit\Loot\Entity\App')->findByUserId($app['user']->getId(), 1);
 
@@ -57,10 +46,6 @@ class AppsControllerProvider implements ControllerProviderInterface
          * Show the app $id
          */
         $controllers->get('/{locale}/app/{id}', function($locale, $id) use ($app) {
-
-            if (!$app['user'] || !$app['user']->getIsDeveloper()) {
-                throw new AccessDeniedHttpException(sprintf('User "%s" is not allowed to access this area', $userId));
-            }
 
             //get all apps of the current user
             $apps = $app['em']->getRepository('Pitpit\Loot\Entity\App')->findByUserId($app['user']->getId());
@@ -96,10 +81,6 @@ class AppsControllerProvider implements ControllerProviderInterface
          * show the form to edit ap $id and store its update on POST
          */
         $controllers->match('/{locale}/app/{id}/_edit', function($locale, $id) use ($app) {
-
-            if (!$app['user'] || !$app['user']->getIsDeveloper()) {
-                throw new AccessDeniedHttpException(sprintf('User "%s" is not allowed to access this area', $userId));
-            }
 
             //get all apps of the current user
             $apps = $app['em']->getRepository('Pitpit\Loot\Entity\App')->findByUserId($app['user']->getId());
@@ -151,10 +132,6 @@ class AppsControllerProvider implements ControllerProviderInterface
          */
         $controllers->get('/{locale}/app/{id}/_delete', function($locale, $id) use ($app) {
 
-            if (!$app['user'] || !$app['user']->getIsDeveloper()) {
-                throw new AccessDeniedHttpException(sprintf('User "%s" is not allowed to access this area', $userId));
-            }
-
             //get all apps of the current user
             $current = $app['em']->getRepository('Pitpit\Loot\Entity\App')->findOneByIdAndUserId($id, $app['user']->getId());
 
@@ -176,10 +153,6 @@ class AppsControllerProvider implements ControllerProviderInterface
          * @category ajax
          */
         $controllers->post('/{locale}/app/_create', function($locale) use ($app) {
-
-            if (!$app['user'] || !$app['user']->getIsDeveloper()) {
-                throw new AccessDeniedHttpException(sprintf('User is not allowed to access this area'));
-            }
 
             //@todo check the max number of apps
 
@@ -220,10 +193,6 @@ class AppsControllerProvider implements ControllerProviderInterface
          * @category api
          */
         $controllers->get('/app/_query', function() use ($app) {
-
-            if (!$app['user'] || !$app['user']->getIsDeveloper()) {
-                throw new AccessDeniedHttpException(sprintf('User is not allowed to access this area'));
-            }
 
             $myApp = null;
             if ($name = $app['request']->get('name')) {

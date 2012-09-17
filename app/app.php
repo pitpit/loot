@@ -10,18 +10,8 @@ $app->register(new Digex\Provider\ConfigurationServiceProvider(), array(
     'config.config_dir'    => __DIR__ . '/config',
     'config.env'    => isset($env)?$env:null,
 ));
-
-$app->register(new Silex\Provider\SecurityServiceProvider());
-
-$app['security.firewalls'] = array(
-    'admin' => array(
-        'pattern' => '^/[^\/]+/apps',
-        'form' => array('login_path' => '/login', 'check_path' => '/login_check'),
-        'users' => array(
-            'admin' => array('ROLE_ADMIN', '5FZ2Z8QIkA7UTZ4BYkoC+GsReLf569mSKDsfods6LYQ8t+a8EW9oaircfMpmaLbPBh4FOBiiFyLfuZmTSUwzZg=='),
-        ),
-    ),
-);
+    
+$app->register(new Silex\Provider\SessionServiceProvider());
 
 $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
     'db.options' => array(
@@ -41,6 +31,33 @@ $app->register(new Digex\Provider\DoctrineORMServiceProvider(), array(
     ),
     'em.fixtures'              => $app['config']['em']['fixtures'],
 ));
+
+
+$app->register(new Silex\Provider\SecurityServiceProvider());
+
+$app['security.firewalls'] = array(
+    'login' => array(
+        'pattern' => '^/login$',
+        'anonymous' => true,
+    ),
+    'secured' => array(
+        'pattern' => '^/(dev|logout$|login_check$)',
+        'form' => array('login_path' => '/login', 'check_path' => '/login_check'),
+        'logout' => array('logout_path' => '/logout'),
+        'users' => $app->share(function () use ($app) {
+            return new  Pitpit\Loot\Security\UserProvider($app['em']);
+        }),
+    ),
+);
+
+$app['security.role_hierarchy'] = array(
+    'ROLE_ADMIN' => array('ROLE_USER', 'ROLE_ALLOWED_TO_SWITCH', 'ROLE_DEVELOPER'),
+    'ROLE_DEVELOPER' => array('ROLE_USER'),
+);
+
+$app['security.access_rules'] = array(
+    array('^/dev', 'ROLE_DEVELOPER'),
+);
 
 $app->register(new Pitpit\Geo\Provider\PostGisServiceProvider());
 
@@ -79,8 +96,32 @@ $app->before(function () use ($app) {
     }
 });
 
+// $app['locale'] = $app->share(function() use ($app) {
+//     $locale = $app['request']->get('locale');
+//     if ($locale) {
+//         if (!isset($app['config']['translator']['locales'][$locale]) && $locale != $app['config']['translator']['locale_fallback']) {
+//             throw new Symfony\Component\HttpKernel\Exception\NotFoundHttpException(sprintf('Locale "%s" is not supported', $locale));
+//         }
+//         return $locale;
+//     } else {
+//         return $app['config']['translator']['locale_fallback'];
+//     }
+// });
+
+//load current user from session & database
+//@todo move it in a global place
+$app['user'] = $app->share(function () use ($app) {
+    $token = $app['security']->getToken();
+    if (null === $token) {
+        return null;
+    }
+
+    return $app['em']->getRepository('Pitpit\Loot\Entity\User')->findOneByEmail($token->getUser()->getUsername());
+});
+
 //Register your controllers here...
 $app->mount('/api', new Pitpit\Loot\Controller\ApiControllerProvider());
-$app->mount('/', new Pitpit\Loot\Controller\AppsControllerProvider());
+$app->mount('/dev', new Pitpit\Loot\Controller\AppsControllerProvider());
+$app->mount('/', new Pitpit\Loot\Controller\SecurityControllerProvider());
 
 return $app;

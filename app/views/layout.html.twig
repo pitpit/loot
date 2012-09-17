@@ -11,7 +11,7 @@
         {% endblock %}
     </head>
     <body>
-
+        {% block navbar %}
         <div class="navbar navbar-fixed-top">
           <div class="navbar-inner">
             <div class="container">
@@ -22,41 +22,44 @@
               </a>
               <a class="brand" href="#">Loot</a>
               <div class="btn-group pull-right">
-                {% if app.user is defined %}
+                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
                 <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
                   <i class="icon-user"></i> {{ app.user.email }}
                   <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu">
-                  <li><a href="{{ path('apps', {'locale': locale}) }}">Your Apps</a></li>
                   <li><a href="#">Profile</a></li>
                   <li class="divider"></li>
-                  <li><a href="#">Sign Out</a></li>
+                  <li><a href="{{ path('logout') }}">{{ "Logout" }}</a></li>
                 </ul>
                 {% else %}
                 <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                  <i class="icon-user"></i> Sign In / Login
+                  <i class="icon-user"></i> {{ "Sign In / Login" }}
                   <span class="caret"></span>
                 </a>
                 {% endif %}
               </div>
               <div class="nav-collapse">
                 <ul class="nav">
-                  <li class="active"><a href="#">Home</a></li>
-                  <li><a href="#contact">Documentation</a></li>
+                  <li class="active"><a href="#">{{ "Home" }}</a></li>
+                  <li><a href="#contact">{{ "Documentation" }}</a></li>
+                  <li><a href="{{ path('apps', {'locale': locale}) }}">{{ "Your Apps" }}</a></li>
                   <li class="divider-vertical"></li>
                 </ul>
               </div><!--/.nav-collapse -->
             </div>
           </div>
         </div>
+        {% endblock %}
 
         <div class="container">
             {%- block content %}{% endblock %}
+            {%- block footer %}
             <hr>
             <footer>
             <p>&copy; 2011-2012, <a href="http://www.black-syndicate.com" target="_blank">black-syndicate</a></p>
             </footer>
+            {% endblock %}
         </div>
         {% block javascripts %}
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
@@ -65,19 +68,19 @@
             document.write(unescape("%3Cscript src='/js/jquery-1.7.2.min.js' type='text/javascript'%3E%3C/script%3E"));
         }
         </script>
-        {#<script src="/js/bootstrap-transition.js"></script>
-        <script src="/js/bootstrap-alert.js"></script>#}
+        <script src="/js/bootstrap-transition.js"></script>
+        <script src="/js/bootstrap-alert.js"></script>
         <script src="/js/bootstrap-modal.js"></script>
         <script src="/js/bootstrap-dropdown.js"></script>
-        {#<script src="/js/bootstrap-scrollspy.js"></script>
-        <script src="/js/bootstrap-tab.js"></script>#}
+        <script src="/js/bootstrap-scrollspy.js"></script>
+        <script src="/js/bootstrap-tab.js"></script>
         <script src="/js/bootstrap-tooltip.js"></script>
         <script src="/js/bootstrap-popover.js"></script>
-        {#<script src="/js/bootstrap-button.js"></script>
+        <script src="/js/bootstrap-button.js"></script>
         <script src="/js/bootstrap-collapse.js"></script>
         <script src="/js/bootstrap-carousel.js"></script>
         <script src="/js/bootstrap-typeahead.js"></script>
-        <script src="/js/jquery.controls.js"></script>#}
+        <script src="/js/jquery.controls.js"></script>
         <script src="/js/jquery.dialog2.js"></script>
         <script src="/js/jquery.dialog2.helpers.js"></script>
         {#<script type="text/javascript">

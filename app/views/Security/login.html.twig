@@ -1,0 +1,39 @@
+{% extends 'layout.html.twig' %}
+{% block title %}{{ "Login"|trans }}{{ parent() }}{% endblock %}
+{% block navbar %}{% endblock %}
+{% block footer %}{% endblock %}
+{% block content %}
+<form action="{{ path('login_check') }}" method="post">
+    <div class="modal" id="login-modal">
+        <div class="modal-header">
+            <h3>{{ "Login"|trans }}</h3>
+        </div>
+        <div class="modal-body">
+            {% if error %}
+            <div class="alert alert-error fade in">
+                {{ error }}
+            </div>
+            {% endif %}
+
+            <label for="username">{{ "Email:"|trans }}</label>
+            <input type="text" id="username" name="_username" value="{{ last_username }}" required />
+            <label for="password">{{ "Password:"|trans }}</label>
+            <input type="password" id="password" name="_password" required />
+            {#<label class="checkbox" for="remember_me"><input type="checkbox" id="remember_me" name="_remember_me" /> {{ "Keep me logged in"|trans }}</label>#}
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" name="login" type="submit">{{ "Login"|trans }}</button>
+            {#<a href="{{ path('DccUserContentBundle_lost_password') }}">{{ 'Lost Password ?'|trans }}</a>#}
+        </div>
+    </div>
+</form>
+{% endblock %}
+{% block javascripts %}
+{{ parent() }}
+<script type="text/javascript">
+$(function () {
+    $('#login-modal').modal({backdrop: false})
+});
+</script>
+{% endblock %}
+
