@@ -1,0 +1,10 @@
+'It works!': 'Ca marche !'
+'Language switcher': 'Changement de langue'
+'Localization': 'Traduction'
+'Static translation is natively supported by Digex. Please try the language switcher below:' : 'La traduction des textes statiques est nativement supportée par Digex. Changez la langue du site ci-dessous :'
+'Database': 'Base de donnée'
+'Thanks to Doctrine, Digex provides the ability to easily map data in PHP and make interoperable queries.': "Grâce à Doctrine, Digex permet de mapper les données en PHP rapidement et d'implémenter des requêtes interoperable"
+'Just run the following commands to set up your database:': 'Executez les commandes suivante pour configurer la base de donnée :'
+"Then follow this <a href='%link%'>link</a> to see your data in action.": "Puis suivez <a href='%link%'>ce lien</a> pour tester."
+'Forms': 'Formulaires'
+'Your current locale is:': 'Votre locale courante est :'

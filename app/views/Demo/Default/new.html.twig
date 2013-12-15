@@ -1,0 +1,15 @@
+{% extends 'Demo/layout.html.twig' %}
+{% block title %}{{ "It works!"|trans }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="span12">
+      <h2>{{ "New User"|trans }}</h2>
+        <form action="{{ path('new_user') }}" class="form-vertical" method="post">
+            {{ form_rest(form) }}
+            <button id="btn-create" type="submit" class="btn btn-primary">{{ "Create"|trans }}</button>
+            <a href="{{ path('home') }}" id="btn-cancel" class="btn" >{{ "Cancel"|trans }}</a>
+      </form>
+    </div>
+</div>
+{% endblock %}

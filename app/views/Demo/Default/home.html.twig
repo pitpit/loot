@@ -1,0 +1,74 @@
+{% extends 'Demo/layout.html.twig' %}
+{% block title %}{{ "Welcome"|trans }} | {{ parent() }}{% endblock %}
+
+{% block content %}
+<div class="row">
+
+  <div class="span4">
+    <h2>Welcome !</h2>
+    <p>Digex is a fully working skeleton based on the micro-framework <a href="http://silex.sensiolabs.org" target="_blank">Silex</a> (Symfony2 Components).</p>
+    <p>It provides a lot features which will help you to quickly develop websites and apps in a Symfony way.</p>
+
+    <hr/>
+
+    <h2>Templates</h2>
+    <p>Digex use <a href="http://twig.sensiolabs.org/" target="_blank">Twig</a> as default template engine.</p>
+
+    <hr/>
+
+    <h2>Config & Environment</h2>
+    <p>Digex support multiple configuration format (yaml, xml...) for several environments.</p>
+    <p>Look in <code>app/config</code> directory.</p>
+
+    <p>Try to switch to another environment:</p>
+    <ul>
+      <li><a href="/index.php">PROD</a></li>
+      <li><a href="/index_dev.php">DEV</a></li>
+    </ul>
+
+    <div class="alert alert-success">
+      debug: <strong>{{ app.debug?"true":"false" }}</strong> | env: <strong>{{ app.env }}</strong>
+    </div>
+
+  </div>
+
+  <div class="span4">
+    <h2>{{ "Translation"|trans }}</h2>
+    <p>{{ "Static translation is natively supported by Digex. Please try the language switcher below:"|trans }}</p>
+    <ul>
+      <li><a href="{{ path('home', {'_locale': 'fr'})}}">Français</a></li>
+      <li><a href="{{ path('home', {'_locale': 'en'})}}">English</a></li>
+    </ul>
+    <h3>Translation in twig</h3>
+    <p>Use <code>trans</code> function to translate static text.</strong> <code>app.locale</code> will return the current locale.</p>
+    <p>{{ 'The current locale is:'|trans }} <strong>{{ app.locale }}</strong></p>
+
+    <hr/>
+
+    <h2>{{ "Security"|trans }}</h2>
+    <p>{{ "Digex support provide user authentication and restriction system."|trans }} </p>
+    <a href="{{ path('admin_home') }}" class="btn btn-warning">{{ "Go to the restricted area" }}</a>
+
+  </div>
+
+
+  <div class="span4">
+    <h2>{{ "Database"|trans }}</h2>
+    <p>{{ "Thanks to Doctrine, Digex provides the ability to easily map data in PHP and make interoperable queries."|trans }}</p>
+    <p>{{ "Just run the following commands to set up your database:"|trans }}</p>
+    <pre>php bin/console doctrine:database:create
+php bin/console doctrine:schema:create
+php bin/console doctrine:fixtures:load</pre>
+    <a class="btn btn-primary" href='{{ path('user') }}'>See your data</a>
+
+    <hr/>
+
+    <h2>Forms & Validators</h2>
+    <p>{{ "Here's a demo of form with validators."|trans }}</p>
+    <a class="btn btn-primary" href="{{ path('new_user') }}">{{ "Create user"|trans }}</a>
+
+
+
+  </div>
+</div>
+{% endblock %}

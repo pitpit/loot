@@ -1,0 +1,18 @@
+{% extends 'Admin/layout.html.twig' %}
+{% block title %}{{ "Sign in"|trans }}{{ parent() }}{% endblock %}
+
+{% block content %}
+{% if error %}
+<div class="alert alert-error fade in">
+{{ error }}
+<a class="close" data-dismiss="alert" href="#">&times;</a>
+</div>
+{% endif %}
+<form action="{{ path('admin_login_check') }}" method="post" class="form-inline">
+      <h3>{{ "Sign in" }}</h3>
+      <p class="muted">{{ "Demo credentials: admin/foo"}}</p>
+      <input type="text" id="username" name="_username" value="{{ last_username }}" placeholder="{{ "Username"|trans }}" required />
+      <input type="password" id="password" name="_password" placeholder="{{ "Password"|trans }}" required />
+      <button class="btn" name="login" type="submit">{{ "Sign In"|trans }}</button>
+</form>
+{% endblock %}

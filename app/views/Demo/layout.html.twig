@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>{% block title %}Digex{% endblock %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
+        <style type="text/css">
+          body {
+            padding-top: 60px;
+            padding-bottom: 40px;
+          }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="hero-unit">
+              <h1><a href="{{ path('home') }}">Digex</a><small> DigitasLBi</small></h1>
+              <p>Do it Good, do it Quick</p>
+            </div>
+            {%- block content %}{% endblock %}
+            <hr>
+            <footer>
+            <p>Digex &copy; 2011-2012, DigitasLBi France</p>
+            </footer>
+        </div>
+    </body>
+</html>

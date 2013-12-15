@@ -1,0 +1,40 @@
+{% extends 'Demo/layout.html.twig' %}
+{% block title %}{{ "It works!"|trans }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="span4">
+      <h2>{{ "Users"|trans }}</h2>
+      <p>{{ "Here's some users from the database:"|trans }}</p>
+      <ul>
+        {% for user in users %}
+        <li><a href="{{ path('user', { 'id': user.id }) }}">{{ user.firstname }} {{ user.lastname }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="span4">
+      <h2>{{ "Forms"|trans }}</h2>
+      <p>{{ "Here's a demo of form with validators:"|trans }}</p>
+      <a class="btn btn-primary" href="{{ path('new_user') }}">{{ "Create user"|trans }}</a>
+    </div>
+    {% if current_user %}
+    <div class="span4">
+      <h2>{{ current_user.firstname }} {{ current_user.lastname }}</h2>
+      <table class="table table-hover table-bordered">
+        <tbody>
+            <tr>
+                <th>id</th>
+                <td>{{ current_user.id }}</td>
+            </tr>
+            <tr>
+                <th>email</th>
+                <td>{{ current_user.email }}</td>
+            </tr>
+        </tbody>
+      </table>
+      <p></p>
+      <p></p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
